@@ -3,7 +3,7 @@ const Commissions = (() => {
   const PER=15;
   let _all=[], _filtered=[], _page=1, _sort={k:'dateAdded',d:'desc'};
   let _sel=new Set(), _filterClientId=null;
-  let _cMap={}; // module-level closure for selAll/clearSel fix
+  let _cMap={}; // client lookup map, shared by selAll/clearSel/render
   let _view = localStorage.getItem('fcms-comm-view') || 'table';
   const STATUSES=['Pending','In Progress','Revision','Completed','Delivered','Cancelled'];
   const DEFAULT_SERVICES=['Logo Design','UI/UX Design','Web Development','Illustration','Animation','Video Editing','Copywriting','Social Media','Photography','Branding','Print Design','Other'];
@@ -88,7 +88,12 @@ const Commissions = (() => {
   function renderKanban(cMap={}) {
     const area = H.el('cm-view-area'); if (!area) return;
     if (!_filtered.length) {
-      area.innerHTML = `<div class="empty">
+      const filtering = (H.el('cm-q')?.value||'').trim().length>0 || (H.el('cm-status')?.value||'')!=='' || !!_filterClientId;
+      area.innerHTML = filtering ? `<div class="empty">
+        <svg class="empty-ico" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        <div class="empty-ttl">No matches found</div>
+        <div class="empty-sub">Try a different search term or status filter.</div>
+      </div>` : `<div class="empty">
         <svg class="empty-ico" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
         <div class="empty-ttl">No commissions found</div><div class="empty-sub">Create your first commission.</div>
       </div>`;
@@ -150,7 +155,13 @@ const Commissions = (() => {
     const {items,pages}=H.paginate(_filtered,_page,PER);
     const tbody=H.el('cm-tbody'); if(!tbody) return;
     if(!items.length){
-      tbody.innerHTML=`<tr><td colspan="10"><div class="empty">
+      const filtering = (H.el('cm-q')?.value||'').trim().length>0 || (H.el('cm-status')?.value||'')!=='' || !!_filterClientId;
+      tbody.innerHTML = filtering ? `<tr><td colspan="10"><div class="empty">
+        <svg class="empty-ico" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        <div class="empty-ttl">No matches found</div>
+        <div class="empty-sub">Try a different search term or status filter.</div>
+        <div class="empty-cta"><button class="btn btn-ghost btn-sm" onclick="Commissions.clearFilter()">Clear filters</button></div>
+      </div></td></tr>` : `<tr><td colspan="10"><div class="empty">
         <svg class="empty-ico" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
         <div class="empty-ttl">No commissions found</div><div class="empty-sub">Create your first commission.</div>
       </div></td></tr>`;
@@ -187,7 +198,7 @@ const Commissions = (() => {
   }
 
   function updateBulk(){const bar=H.el('cm-bulk'),cnt=H.el('cm-bulk-cnt');if(!bar)return;if(_sel.size>0){bar.classList.remove('hidden');cnt.textContent=`${_sel.size} selected`;}else bar.classList.add('hidden');}
-  // Bug 2 fix: use _cMap in selAll/clearSel
+  // Uses the shared _cMap so re-rendering after selection stays consistent
   function selAll(){_sel=new Set(_filtered.map(c=>c.id));renderTable(_cMap);updateBulk();}
   function clearSel(){_sel.clear();renderTable(_cMap);updateBulk();}
   function clearFilter(){_filterClientId=null;render();}
@@ -242,37 +253,42 @@ const Commissions = (() => {
     if(!clientId){Notify.err('Please select a client.');return;}
     if(price<=0){Notify.err('Price must be greater than 0.');return;}
     if(down>price){Notify.err('Down payment cannot exceed total price.');return;}
-    const isNew=!id;
-    const existing=id?await DB.getById('commissions',id):null;
-    let extraPaid=0;
-    if(existing){
-      const pays=await DB.getAll('payments');
-      extraPaid=pays.filter(p=>p.commissionId===id).reduce((s,p)=>s+H.num(p.amount),0);
+    Modal.setBusy(true);
+    try {
+      const isNew=!id;
+      const existing=id?await DB.getById('commissions',id):null;
+      let extraPaid=0;
+      if(existing){
+        const pays=await DB.getAll('payments');
+        extraPaid=pays.filter(p=>p.commissionId===id).reduce((s,p)=>s+H.num(p.amount),0);
+      }
+      // Remaining balance accounts for the down payment plus any payments already logged
+      const totalPaid=down+extraPaid;
+      const remaining=Math.max(0,price-totalPaid);
+      const newStatus = H.el('cmf-status')?.value||'Pending';
+      const rec={
+        id: id||H.uid('com'), title, clientId,
+        serviceType: H.el('cmf-service')?.value||'Other',
+        description: H.el('cmf-desc')?.value.trim()||'',
+        clientNote: (H.el('cmf-clientnote')?.value||'').trim(),
+        price, downPayment: down, remaining,
+        deadline: H.el('cmf-deadline')?.value||null,
+        status: newStatus,
+        recurFrequency: H.el('cmf-recur')?.value||'none',
+        dateAdded: existing?.dateAdded||H.now(),
+        updatedAt: H.now()
+      };
+      await DB.put('commissions',rec);
+      await Logs.add(isNew?'create':'update',`${isNew?'Created':'Updated'} commission: ${title}`);
+      if (newStatus==='Delivered' && existing?.status!=='Delivered' && rec.recurFrequency!=='none') {
+        await _spawnRecurring(rec);
+      }
+      Modal.close();
+      Notify.ok(`Commission "${title}" ${isNew?'created':'updated'}.`);
+      await render();
+    } finally {
+      Modal.setBusy(false);
     }
-    // Bug 4 fix: correct remaining formula
-    const totalPaid=down+extraPaid;
-    const remaining=Math.max(0,price-totalPaid);
-    const newStatus = H.el('cmf-status')?.value||'Pending';
-    const rec={
-      id: id||H.uid('com'), title, clientId,
-      serviceType: H.el('cmf-service')?.value||'Other',
-      description: H.el('cmf-desc')?.value.trim()||'',
-      clientNote: (H.el('cmf-clientnote')?.value||'').trim(),
-      price, downPayment: down, remaining,
-      deadline: H.el('cmf-deadline')?.value||null,
-      status: newStatus,
-      recurFrequency: H.el('cmf-recur')?.value||'none',
-      dateAdded: existing?.dateAdded||H.now(),
-      updatedAt: H.now()
-    };
-    await DB.put('commissions',rec);
-    await Logs.add(isNew?'create':'update',`${isNew?'Created':'Updated'} commission: ${title}`);
-    if (newStatus==='Delivered' && existing?.status!=='Delivered' && rec.recurFrequency!=='none') {
-      await _spawnRecurring(rec);
-    }
-    Modal.close();
-    Notify.ok(`Commission "${title}" ${isNew?'created':'updated'}.`);
-    await render();
   }
 
   async function _spawnRecurring(prev) {
@@ -338,7 +354,7 @@ const Commissions = (() => {
     Notify.ok('Commissions exported.');
   }
 
-  // C2: Inline quick status update
+  // Inline status update from the table dropdown, without a full page re-render
   async function quickStatus(id, status) {
     const c = await DB.getById('commissions', id);
     if (!c) return;

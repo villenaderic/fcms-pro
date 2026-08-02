@@ -95,7 +95,13 @@ const Clients = (() => {
     const { items, pages } = H.paginate(_filtered, _page, PER);
     const tbody = H.el('cl-tbody'); if (!tbody) return;
     if (!items.length) {
-      tbody.innerHTML = `<tr><td colspan="8"><div class="empty">
+      const searching = (H.el('cl-q')?.value || '').trim().length > 0;
+      tbody.innerHTML = searching ? `<tr><td colspan="8"><div class="empty">
+        <svg class="empty-ico" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        <div class="empty-ttl">No matches found</div>
+        <div class="empty-sub">Try a different name, phone number, or email.</div>
+        <div class="empty-cta"><button class="btn btn-ghost btn-sm" onclick="H.el('cl-q').value='';Clients.render()">Clear search</button></div>
+      </div></td></tr>` : `<tr><td colspan="8"><div class="empty">
         <svg class="empty-ico" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
         <div class="empty-ttl">No clients yet</div>
         <div class="empty-sub">Click "+ Add Client" to add your first client.</div>
@@ -263,20 +269,25 @@ const Clients = (() => {
     const email = (H.el('cf-email')?.value || '').trim();
     if (!name) { Notify.err('Name is required.'); return; }
     if (email && !H.validEmail(email)) { Notify.err('Invalid email address.'); return; }
-    const isNew    = !id;
-    const existing = id ? await DB.getById('clients', id) : null;
-    const rec = {
-      id: id || H.uid('cli'), name, phone, email,
-      social: (H.el('cf-social')?.value || '').trim(),
-      notes:  (H.el('cf-notes')?.value  || '').trim(),
-      dateAdded: existing?.dateAdded || H.now(),
-      updatedAt: H.now()
-    };
-    await DB.put('clients', rec);
-    await Logs.add(isNew ? 'create' : 'update', `${isNew ? 'Added' : 'Updated'} client: ${name}`);
-    Modal.close();
-    Notify.ok(`Client "${name}" ${isNew ? 'added' : 'updated'}.`);
-    await render();
+    Modal.setBusy(true);
+    try {
+      const isNew    = !id;
+      const existing = id ? await DB.getById('clients', id) : null;
+      const rec = {
+        id: id || H.uid('cli'), name, phone, email,
+        social: (H.el('cf-social')?.value || '').trim(),
+        notes:  (H.el('cf-notes')?.value  || '').trim(),
+        dateAdded: existing?.dateAdded || H.now(),
+        updatedAt: H.now()
+      };
+      await DB.put('clients', rec);
+      await Logs.add(isNew ? 'create' : 'update', `${isNew ? 'Added' : 'Updated'} client: ${name}`);
+      Modal.close();
+      Notify.ok(`Client "${name}" ${isNew ? 'added' : 'updated'}.`);
+      await render();
+    } finally {
+      Modal.setBusy(false);
+    }
   }
 
   async function delOne(id) {

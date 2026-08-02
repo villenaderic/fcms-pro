@@ -104,7 +104,12 @@ const Invoices = (() => {
     const { items, pages } = H.paginate(_filtered, _page, PER);
     const tbody = H.el('inv-tbody'); if (!tbody) return;
     if (!items.length) {
-      tbody.innerHTML = `<tr><td colspan="8"><div class="empty">
+      const filtering = (H.el('inv-q')?.value||'').trim().length>0 || (H.el('inv-status')?.value||'')!=='';
+      tbody.innerHTML = filtering ? `<tr><td colspan="8"><div class="empty">
+        <svg class="empty-ico" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        <div class="empty-ttl">No matches found</div>
+        <div class="empty-sub">Try a different search term or status filter.</div>
+      </div></td></tr>` : `<tr><td colspan="8"><div class="empty">
         <svg class="empty-ico" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
         <div class="empty-ttl">No invoices yet</div>
         <div class="empty-sub">Create an invoice to bill a client for completed work.</div>
@@ -249,28 +254,33 @@ const Invoices = (() => {
     if (!desc)     { Notify.err('Description is required.'); return; }
     if (sub <= 0)  { Notify.err('Subtotal must be greater than 0.'); return; }
 
-    const isNew    = !id;
-    const existing = id ? await DB.getById('invoices', id) : null;
-    const rec = {
-      id: id || H.uid('inv'),
-      invoiceNumber: existing?.invoiceNumber || (await nextNumber()),
-      clientId,
-      commissionId: H.el('invf-comm')?.value || null,
-      description: desc,
-      subtotal: sub, discount: disc, tax, total,
-      issueDate: H.el('invf-issue')?.value || H.now().split('T')[0],
-      dueDate:   H.el('invf-due')?.value   || '',
-      status: forceStatus || H.el('invf-status')?.value || 'Draft',
-      terms:  (H.el('invf-terms')?.value  || '').trim(),
-      notes:  (H.el('invf-notes')?.value  || '').trim(),
-      createdAt: existing?.createdAt || H.now(),
-      updatedAt: H.now()
-    };
-    await DB.put('invoices', rec);
-    await Logs.add(isNew ? 'create' : 'update', `${isNew ? 'Created' : 'Updated'} invoice: ${rec.invoiceNumber}`);
-    Modal.close();
-    Notify.ok(`Invoice ${rec.invoiceNumber} ${isNew ? 'created' : 'updated'}.`);
-    await render();
+    Modal.setBusy(true);
+    try {
+      const isNew    = !id;
+      const existing = id ? await DB.getById('invoices', id) : null;
+      const rec = {
+        id: id || H.uid('inv'),
+        invoiceNumber: existing?.invoiceNumber || (await nextNumber()),
+        clientId,
+        commissionId: H.el('invf-comm')?.value || null,
+        description: desc,
+        subtotal: sub, discount: disc, tax, total,
+        issueDate: H.el('invf-issue')?.value || H.now().split('T')[0],
+        dueDate:   H.el('invf-due')?.value   || '',
+        status: forceStatus || H.el('invf-status')?.value || 'Draft',
+        terms:  (H.el('invf-terms')?.value  || '').trim(),
+        notes:  (H.el('invf-notes')?.value  || '').trim(),
+        createdAt: existing?.createdAt || H.now(),
+        updatedAt: H.now()
+      };
+      await DB.put('invoices', rec);
+      await Logs.add(isNew ? 'create' : 'update', `${isNew ? 'Created' : 'Updated'} invoice: ${rec.invoiceNumber}`);
+      Modal.close();
+      Notify.ok(`Invoice ${rec.invoiceNumber} ${isNew ? 'created' : 'updated'}.`);
+      await render();
+    } finally {
+      Modal.setBusy(false);
+    }
   }
 
   async function markPaid(id) {

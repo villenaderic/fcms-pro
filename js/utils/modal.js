@@ -53,5 +53,22 @@ const Modal = (() => {
     }, 30);
   }
 
-  return { init, open, close, confirm };
+  function setBusy(busy, busyText = 'Saving…') {
+    const foot = H.el('modal-foot'); if (!foot) return;
+    const buttons = Array.from(foot.querySelectorAll('button'));
+    if (!buttons.length) return;
+    const active = document.activeElement;
+    const target = (active && buttons.includes(active)) ? active : (foot.querySelector('.btn-primary') || buttons[0]);
+    buttons.forEach(b => { b.disabled = busy; });
+    if (busy) {
+      if (!target.dataset.origText) target.dataset.origText = target.textContent;
+      target.textContent = busyText;
+    } else {
+      buttons.forEach(b => {
+        if (b.dataset.origText) { b.textContent = b.dataset.origText; delete b.dataset.origText; }
+      });
+    }
+  }
+
+  return { init, open, close, confirm, setBusy };
 })();

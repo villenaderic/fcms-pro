@@ -5,14 +5,18 @@ FCMS Pro is a browser-based Freelance Commission Management System built for fre
 ## Features
 
 - **Client management** - store client details, contact information, and history in one place
-- **Commissions and quotes** - create quotes, convert them into commissions, and track status from start to delivery
+- **Client profile view** - a full activity timeline per client combining commissions, payments, and invoices, alongside lifetime totals and outstanding balance
+- **Commissions and quotes** - create quotes, convert them into commissions, and track status from start to delivery, in either a table or a board (kanban) view
+- **Recurring commissions** - mark a commission to repeat weekly, every two weeks, or monthly; the next occurrence is created automatically once the current one is marked Delivered
 - **Payments and invoices** - log partial or full payments, generate invoices, and see outstanding balances at a glance
+- **Overdue alerts** - overdue invoices and approaching commission deadlines both surface in the notification bell, with an at-a-glance day count on overdue invoice rows
 - **Receipts** - generate printable receipts as HTML or as downloadable canvas images, with a verification code on each one
 - **Expenses and goals** - track business expenses and set monthly or yearly income goals
 - **Dashboard and analytics** - a quick overview of income, pending payments, and recent activity
 - **Backup and restore** - export all data to a single JSON file and re-import it later
 - **Offline-first PWA** - installs to your desktop or phone and works without an internet connection
 - **Local authentication** - single admin account with a hashed password, session expiry, and lockout after repeated failed logins
+- **Keyboard shortcuts** - press `/` to search, `?` to see all shortcuts, and two-key sequences (like `gc` for Clients or `nw` for a new commission) to jump around quickly
 
 ## Tech stack
 
@@ -86,6 +90,16 @@ fcms-pro/
 ## Data and privacy
 
 All data is stored locally in your browser's IndexedDB. Nothing is sent to an external server unless you configure and use the optional PHP email feature. Regular backups are recommended since clearing your browser data will remove everything stored in the app.
+
+## Changelog
+
+**Latest**
+- Added recurring commissions with weekly, biweekly, and monthly repeat options
+- Added a unified activity timeline to the client profile view, combining commissions, payments, and invoices
+- Added overdue invoice alerts to the notification bell and an on-row day count for overdue invoices
+- Fixed the Commissions board (kanban) view, which was rendering without any styling due to a class name mismatch between the markup and the stylesheet
+- Improved empty states across Clients, Commissions, Invoices, and Payments to distinguish "no data yet" from "no results for your search or filter"
+- Added protection against accidental double submissions when saving a client, commission, invoice, or payment
 
 ## License
 

@@ -97,7 +97,12 @@ const Payments = (() => {
     const {items,pages}=H.paginate(_filtered,_page,PER);
     const tbody=H.el('py-tbody'); if(!tbody) return;
     if(!items.length){
-      tbody.innerHTML=`<tr><td colspan="9"><div class="empty">
+      const filtering = (H.el('py-q')?.value||'').trim().length>0 || (H.el('py-method')?.value||'')!=='';
+      tbody.innerHTML = filtering ? `<tr><td colspan="9"><div class="empty">
+        <svg class="empty-ico" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        <div class="empty-ttl">No matches found</div>
+        <div class="empty-sub">Try a different search term or payment method filter.</div>
+      </div></td></tr>` : `<tr><td colspan="9"><div class="empty">
         <svg class="empty-ico" viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
         <div class="empty-ttl">No payments recorded</div>
       </div></td></tr>`;
@@ -129,7 +134,7 @@ const Payments = (() => {
   }
 
   function updateBulk(){const b=H.el('py-bulk'),c=H.el('py-bulk-cnt');if(!b)return;if(_sel.size>0){b.classList.remove('hidden');c.textContent=`${_sel.size} selected`;}else b.classList.add('hidden');}
-  // Bug 1 fix: use module-level _commMap and _clMap
+  // Uses the module-level _commMap and _clMap so lookups stay in sync with the current list
   function selAll(){_sel=new Set(_filtered.map(p=>p.id));renderTable(_commMap,_clMap,_receiptMap);updateBulk();}
   function clearSel(){_sel.clear();renderTable(_commMap,_clMap,_receiptMap);updateBulk();}
 
@@ -227,23 +232,28 @@ const Payments = (() => {
     if(!comm){Notify.err('Commission not found.');return;}
     if(amount>comm.remaining+0.005){Notify.err(`Amount exceeds remaining balance of ${H.peso(comm.remaining)}.`);return;}
 
-    const payment={
-      id:H.uid('pay'), commissionId:commId, clientId:comm.clientId,
-      amount, method, date, referenceNumber:ref, notes, createdAt:H.now()
-    };
+    Modal.setBusy(true);
+    try {
+      const payment={
+        id:H.uid('pay'), commissionId:commId, clientId:comm.clientId,
+        amount, method, date, referenceNumber:ref, notes, createdAt:H.now()
+      };
 
-    comm.remaining=Math.max(0,comm.remaining-amount);
-    comm.updatedAt=H.now();
+      comm.remaining=Math.max(0,comm.remaining-amount);
+      comm.updatedAt=H.now();
 
-    await DB.put('payments',payment);
-    await DB.put('commissions',comm);
+      await DB.put('payments',payment);
+      await DB.put('commissions',comm);
 
-    await Receipts.autoGenerate(payment,comm);
+      await Receipts.autoGenerate(payment,comm);
 
-    await Logs.add('create',`Payment: ${H.peso(amount)} for "${comm.title}"`);
-    Modal.close();
-    Notify.ok(`Payment of ${H.peso(amount)} recorded. Receipt generated.`);
-    await render();
+      await Logs.add('create',`Payment: ${H.peso(amount)} for "${comm.title}"`);
+      Modal.close();
+      Notify.ok(`Payment of ${H.peso(amount)} recorded. Receipt generated.`);
+      await render();
+    } finally {
+      Modal.setBusy(false);
+    }
   }
 
   async function viewDetail(id) {
@@ -279,7 +289,7 @@ const Payments = (() => {
       onConfirm: async()=>{
         const comm=await DB.getById('commissions',pay.commissionId);
         if(comm){
-          // A4 fix: recalculate from all remaining payments for accuracy
+          // Recalculate from all remaining payments so totals stay accurate
           const allPays=await DB.getAll('payments');
           const totalStillPaid=allPays
             .filter(p=>p.commissionId===pay.commissionId&&p.id!==id)
