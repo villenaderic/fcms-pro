@@ -108,7 +108,7 @@ const Commissions = (() => {
               const d = H.daysUntil(c.deadline);
               const overdue = d !== null && d < 0 && !['Delivered','Cancelled'].includes(status);
               return `<div class="kanban-card" onclick="Commissions.openForm('${c.id}')">
-                <div class="kc-title">${H.esc(H.trunc(c.title, 32))}</div>
+                <div class="kc-title">${H.esc(H.trunc(c.title, 32))}${c.recurFrequency&&c.recurFrequency!=='none'?` <span title="Repeats ${c.recurFrequency}" style="font-size:0.68rem">🔁</span>`:''}</div>
                 <div class="kc-client">${H.esc(cl?.name || '-')} · ${H.esc(c.serviceType||'')}</div>
                 <div class="kc-footer">
                   <span class="kc-price">${H.peso(c.price)}</span>
@@ -162,7 +162,7 @@ const Commissions = (() => {
       const dlStyle=(d!==null&&d<=3&&!['Delivered','Cancelled'].includes(c.status))?'color:var(--red);font-weight:600':'';
       return `<tr>
         <td><input type="checkbox" class="cb cm-cb" data-id="${c.id}" ${_sel.has(c.id)?'checked':''}/></td>
-        <td><strong>${H.esc(H.trunc(c.title,26))}</strong>${c.clientNote?`<div style="font-size:0.72rem;color:var(--t3)">${H.esc(H.trunc(c.clientNote,30))}</div>`:''}</td>
+        <td><strong>${H.esc(H.trunc(c.title,26))}</strong>${c.recurFrequency&&c.recurFrequency!=='none'?` <span title="Repeats ${c.recurFrequency}" style="font-size:0.68rem;color:var(--a)">🔁</span>`:''}${c.clientNote?`<div style="font-size:0.72rem;color:var(--t3)">${H.esc(H.trunc(c.clientNote,30))}</div>`:''}</td>
         <td class="semi" style="font-size:0.82rem">${H.esc(cl?.name||'-')}</td>
         <td class="muted" style="font-size:0.8rem">${H.esc(c.serviceType||'-')}</td>
         <td class="mono" style="font-size:0.82rem">${H.peso(c.price)}</td>
@@ -216,8 +216,16 @@ const Commissions = (() => {
           <div class="field"><label>Down Payment (₱)</label><input type="number" id="cmf-down" min="0" step="0.01" value="${comm?.downPayment||0}" placeholder="0.00"/></div>
           <div class="field"><label>Deadline</label><input type="date" id="cmf-deadline" value="${H.toInput(comm?.deadline||'')}"/></div>
         </div>
-        <div class="field"><label>Status</label>
-          <select id="cmf-status">${STATUSES.map(s=>`<option ${(comm?.status||'Pending')===s?'selected':''}>${s}</option>`).join('')}</select>
+        <div class="form-2">
+          <div class="field"><label>Status</label>
+            <select id="cmf-status">${STATUSES.map(s=>`<option ${(comm?.status||'Pending')===s?'selected':''}>${s}</option>`).join('')}</select>
+          </div>
+          <div class="field"><label>Repeats</label>
+            <select id="cmf-recur">
+              ${[['none','Does not repeat'],['weekly','Weekly'],['biweekly','Every 2 weeks'],['monthly','Monthly']].map(([v,lbl])=>`<option value="${v}" ${(comm?.recurFrequency||'none')===v?'selected':''}>${lbl}</option>`).join('')}
+            </select>
+            <div class="field-hint">Auto-creates the next commission once this one is marked Delivered.</div>
+          </div>
         </div>`,
       foot: `<button class="btn btn-ghost" onclick="Modal.close()">Cancel</button>
              <button class="btn btn-primary" onclick="Commissions.saveForm('${id||''}')">
@@ -244,6 +252,7 @@ const Commissions = (() => {
     // Bug 4 fix: correct remaining formula
     const totalPaid=down+extraPaid;
     const remaining=Math.max(0,price-totalPaid);
+    const newStatus = H.el('cmf-status')?.value||'Pending';
     const rec={
       id: id||H.uid('com'), title, clientId,
       serviceType: H.el('cmf-service')?.value||'Other',
@@ -251,15 +260,35 @@ const Commissions = (() => {
       clientNote: (H.el('cmf-clientnote')?.value||'').trim(),
       price, downPayment: down, remaining,
       deadline: H.el('cmf-deadline')?.value||null,
-      status: H.el('cmf-status')?.value||'Pending',
+      status: newStatus,
+      recurFrequency: H.el('cmf-recur')?.value||'none',
       dateAdded: existing?.dateAdded||H.now(),
       updatedAt: H.now()
     };
     await DB.put('commissions',rec);
     await Logs.add(isNew?'create':'update',`${isNew?'Created':'Updated'} commission: ${title}`);
+    if (newStatus==='Delivered' && existing?.status!=='Delivered' && rec.recurFrequency!=='none') {
+      await _spawnRecurring(rec);
+    }
     Modal.close();
     Notify.ok(`Commission "${title}" ${isNew?'created':'updated'}.`);
     await render();
+  }
+
+  async function _spawnRecurring(prev) {
+    const nextDeadline = H.addInterval(prev.deadline || prev.dateAdded, prev.recurFrequency);
+    const next = {
+      ...prev,
+      id: H.uid('com'),
+      status: 'Pending',
+      deadline: nextDeadline,
+      remaining: prev.price,
+      dateAdded: H.now(),
+      updatedAt: H.now()
+    };
+    await DB.put('commissions', next);
+    await Logs.add('create', `Auto-created recurring commission: ${next.title}`);
+    Notify.ok(`Next occurrence of "${next.title}" was created automatically.`);
   }
 
   async function duplicate(id) {
@@ -313,10 +342,14 @@ const Commissions = (() => {
   async function quickStatus(id, status) {
     const c = await DB.getById('commissions', id);
     if (!c) return;
+    const wasDelivered = c.status === 'Delivered';
     c.status = status;
     c.updatedAt = H.now();
     await DB.put('commissions', c);
     await Logs.add('update', `Status → ${status}: ${c.title}`);
+    if (status==='Delivered' && !wasDelivered && c.recurFrequency && c.recurFrequency!=='none') {
+      await _spawnRecurring(c);
+    }
     // Update only the chip cell in the row (no full re-render)
     const sel = document.querySelector(`select.chip-sel[data-id="${id}"]`);
     if (sel) {

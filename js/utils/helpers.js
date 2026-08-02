@@ -11,6 +11,7 @@ const H = (() => {
   const fmtDT = iso => { if(!iso) return '-'; const d=new Date(iso); return isNaN(d)?iso:d.toLocaleString('en-PH',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}); };
   const daysUntil = iso => { if(!iso) return null; const t=new Date(iso); t.setHours(0,0,0,0); const d=new Date(); d.setHours(0,0,0,0); return Math.ceil((t-d)/86400000); };
   const toInput = iso => { if(!iso) return ''; const d=new Date(iso); return isNaN(d)?'':d.toISOString().split('T')[0]; };
+  const addInterval = (iso, freq) => { if(!iso) return null; const d=new Date(iso); if(isNaN(d)) return null; if(freq==='weekly') d.setDate(d.getDate()+7); else if(freq==='biweekly') d.setDate(d.getDate()+14); else if(freq==='monthly') d.setMonth(d.getMonth()+1); else return null; return d.toISOString().split('T')[0]; };
 
   /* Money */
   const peso = (v, symbol=true) => { const n=parseFloat(v)||0; const s=n.toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2}); const sym=symbol?(window.Settings?Settings.get('currencySymbol','₱'):'₱'):''; return sym+s; };
@@ -73,6 +74,6 @@ const H = (() => {
   /* Format number without currency for inputs */
   const numFmt = v => { const n = parseFloat(v) || 0; return n.toLocaleString('en-PH', {minimumFractionDigits:2,maximumFractionDigits:2}); };
 
-  return { uid,rctCode,now,fmtDate,fmtDT,daysUntil,toInput,peso,numFmt,num,esc,trunc,hl,pwdStrength,hashPwd,verifyPwd,el,qs,qsa,debounce,validEmail,chip,toCSV,dlFile,dlJSON,readFile,paginate,renderPager,sortArr,search,sanitizeFile };
+  return { uid,rctCode,now,fmtDate,fmtDT,daysUntil,toInput,addInterval,peso,numFmt,num,esc,trunc,hl,pwdStrength,hashPwd,verifyPwd,el,qs,qsa,debounce,validEmail,chip,toCSV,dlFile,dlJSON,readFile,paginate,renderPager,sortArr,search,sanitizeFile };
 })();
 

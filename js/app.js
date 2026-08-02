@@ -484,7 +484,7 @@ const App = (() => {
   }
 
   async function _renderNotifPanel(panel) {
-    const [comms, clients] = await Promise.all([DB.getAll('commissions'), DB.getAll('clients')]);
+    const [comms, clients, invoices] = await Promise.all([DB.getAll('commissions'), DB.getAll('clients'), DB.getAll('invoices')]);
     const clMap = {}; clients.forEach(c => clMap[c.id] = c);
     const notifs = [];
 
@@ -508,6 +508,15 @@ const App = (() => {
     if (highBal.length > 0)
       notifs.push({ t:'info', text:`${highBal.length} commission${highBal.length>1?'s':''} with pending balance`, sub:'Click to review payments', page:'payments' });
 
+    // Overdue invoice alerts
+    (invoices || []).forEach(inv => {
+      if (inv.status === 'Paid' || inv.status === 'Cancelled' || !inv.dueDate) return;
+      const d = H.daysUntil(inv.dueDate);
+      if (d === null || d >= 0) return;
+      const cl = clMap[inv.clientId];
+      notifs.push({ t:'urg', text:`Invoice overdue: ${H.esc(inv.invoiceNumber||'')}`, sub:`${Math.abs(d)}d overdue · ${H.esc(cl?.name||'?')}`, page:'invoices' });
+    });
+
     if (!notifs.length) {
       panel.innerHTML = `<div class="np-head"><span>Notifications</span></div><div class="np-empty">All caught up! No alerts.</div>`;
       return;
@@ -526,12 +535,17 @@ const App = (() => {
 
   async function _refreshBadge() {
     try {
-      const comms = await DB.getAll('commissions');
+      const [comms, invoices] = await Promise.all([DB.getAll('commissions'), DB.getAll('invoices')]);
       let cnt = 0;
       comms.forEach(c => {
         if (['Delivered','Cancelled'].includes(c.status)) return;
         const d = H.daysUntil(c.deadline);
         if (d !== null && d <= 2) cnt++;
+      });
+      (invoices || []).forEach(inv => {
+        if (inv.status === 'Paid' || inv.status === 'Cancelled' || !inv.dueDate) return;
+        const d = H.daysUntil(inv.dueDate);
+        if (d !== null && d < 0) cnt++;
       });
       const badge = H.el('notif-badge');
       const pill  = H.el('nav-pill-comm');

@@ -154,14 +154,20 @@ const Clients = (() => {
   function clearSel(){ _sel.clear(); renderTable(); updateBulk(); }
 
   async function viewProfile(id) {
-    const [c, comms, pays] = await Promise.all([
-      DB.getById('clients', id), DB.getAll('commissions'), DB.getAll('payments')
+    const [c, comms, pays, invs] = await Promise.all([
+      DB.getById('clients', id), DB.getAll('commissions'), DB.getAll('payments'), DB.getAll('invoices')
     ]);
     if (!c) return;
     const clientComms = comms.filter(cm => cm.clientId === id);
     const clientPays  = pays.filter(p => p.clientId === id);
+    const clientInvs  = invs.filter(i => i.clientId === id);
     const totalPaid   = clientPays.reduce((s, p) => s + H.num(p.amount), 0);
     const totalOut    = clientComms.reduce((s, cm) => s + H.num(cm.remaining), 0);
+    const timeline = [
+      ...clientComms.map(cm => ({ date: cm.dateAdded, type: 'Commission', dot: 'blue', label: cm.title, sub: cm.status, amount: cm.price })),
+      ...clientPays.map(p  => ({ date: p.date,      type: 'Payment',    dot: 'green', label: 'Payment received', sub: p.method || '', amount: p.amount })),
+      ...clientInvs.map(i  => ({ date: i.issueDate || i.createdAt, type: 'Invoice', dot: 'amber', label: `Invoice ${i.invoiceNumber || ''}`, sub: i.status, amount: i.total })),
+    ].filter(t => t.date).sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 40);
     const initials    = (c.name || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
 
     Modal.open({
@@ -210,7 +216,18 @@ const Clients = (() => {
             <td>${H.chip(cm.status)}</td>
             <td style="font-size:.79rem" class="muted">${H.fmtDate(cm.deadline)}</td>
           </tr>`).join('')}</tbody>
-        </table></div>` : '<div class="empty"><div class="empty-ttl">No commissions yet</div></div>'}`,
+        </table></div>` : '<div class="empty"><div class="empty-ttl">No commissions yet</div></div>'}
+        <div class="card-label" style="margin-top:16px">Recent Activity</div>
+        ${timeline.length ? `<div style="max-height:240px;overflow-y:auto;display:flex;flex-direction:column;gap:2px">
+          ${timeline.map(t => `<div style="display:flex;align-items:center;gap:10px;padding:7px 4px;border-bottom:1px solid var(--border)">
+            <span style="width:8px;height:8px;border-radius:50%;flex-shrink:0;background:var(--${t.dot === 'blue' ? 'a' : t.dot === 'green' ? 'green' : 'amber'})"></span>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:.81rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${H.esc(t.type)}: ${H.esc(H.trunc(t.label, 32))}</div>
+              <div style="font-size:.71rem;color:var(--t3)">${H.fmtDate(t.date)}${t.sub ? ' · ' + H.esc(t.sub) : ''}</div>
+            </div>
+            <div class="mono" style="font-size:.8rem;flex-shrink:0">${H.peso(t.amount)}</div>
+          </div>`).join('')}
+        </div>` : '<div class="empty"><div class="empty-ttl">No activity yet</div></div>'}`,
       foot: `
         <button class="btn btn-ghost" onclick="Modal.close()">Close</button>
         <button class="btn btn-ghost" onclick="Clients.openForm('${id}');Modal.close()">Edit Client</button>
