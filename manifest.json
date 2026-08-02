@@ -1,0 +1,18 @@
+{
+  "name": "FCMS Pro - Commission Manager",
+  "short_name": "FCMS Pro",
+  "description": "Professional Freelance Commission Management System v4",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#080a0f",
+  "theme_color": "#080a0f",
+  "orientation": "any",
+  "icons": [
+    { "src": "icons/icon.svg",    "sizes": "any",     "type": "image/svg+xml", "purpose": "any maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Dashboard",      "url": "./index.html", "description": "Open dashboard"       },
+    { "name": "New Commission", "url": "./index.html", "description": "Start new commission" },
+    { "name": "New Quote",      "url": "./index.html", "description": "Create new quote"     }
+  ]
+}
