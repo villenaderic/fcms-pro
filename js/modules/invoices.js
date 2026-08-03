@@ -4,6 +4,7 @@ const Invoices = (() => {
   let _all = [], _filtered = [], _page = 1;
   let _sel = new Set();
   let _commMap = {}, _clMap = {};
+  let _sort = { k: 'createdAt', d: 'desc' };
 
   async function nextNumber() {
     const n = await DB.nextCounter('invoice_seq');
@@ -68,12 +69,12 @@ const Invoices = (() => {
         <table>
           <thead><tr>
             <th style="width:36px"><input type="checkbox" class="cb" id="inv-all-cb"/></th>
-            <th>Invoice #</th>
+            <th class="srt" data-c="invoiceNumber">Invoice #</th>
             <th>Client</th>
             <th>Commission</th>
-            <th>Amount</th>
-            <th>Due Date</th>
-            <th>Status</th>
+            <th class="srt" data-c="total">Amount</th>
+            <th class="srt" data-c="dueDate">Due Date</th>
+            <th class="srt" data-c="status">Status</th>
             <th>Actions</th>
           </tr></thead>
           <tbody id="inv-tbody"></tbody>
@@ -84,6 +85,11 @@ const Invoices = (() => {
     H.el('inv-q').addEventListener('input', H.debounce(() => { _page = 1; applyFilter(); }, 260));
     H.el('inv-status').addEventListener('change', () => { _page = 1; applyFilter(); });
     H.el('inv-all-cb').addEventListener('change', e => e.target.checked ? selAll() : clearSel());
+    document.querySelectorAll('thead th.srt').forEach(th => th.addEventListener('click', () => {
+      const c = th.dataset.c;
+      _sort = { k: c, d: _sort.k === c && _sort.d === 'asc' ? 'desc' : 'asc' };
+      _page = 1; applyFilter();
+    }));
     applyFilter();
   }
 
@@ -97,7 +103,15 @@ const Invoices = (() => {
       (_clMap[i.clientId]?.name || '').toLowerCase().includes(q) ||
       (_commMap[i.commissionId]?.title || '').toLowerCase().includes(q)
     );
-    _filtered = list; renderTable();
+    list = H.sortArr(list, _sort.k, _sort.d);
+    _filtered = list; renderTable(); _syncSortHeaders();
+  }
+
+  function _syncSortHeaders() {
+    document.querySelectorAll('#page-content thead th.srt').forEach(th => {
+      th.classList.remove('asc', 'desc');
+      if (th.dataset.c === _sort.k) th.classList.add(_sort.d === 'asc' ? 'asc' : 'desc');
+    });
   }
 
   function renderTable() {

@@ -90,7 +90,14 @@ const Payments = (() => {
       return (cl?.name||'').toLowerCase().includes(q)||(co?.title||'').toLowerCase().includes(q)||(p.referenceNumber||'').toLowerCase().includes(q);
     });
     list=H.sortArr(list,_sort.k,_sort.d);
-    _filtered=list; renderTable(commMap,clMap,receiptMap||{});
+    _filtered=list; renderTable(commMap,clMap,receiptMap||{}); _syncSortHeaders();
+  }
+
+  function _syncSortHeaders() {
+    document.querySelectorAll('#page-content thead th.srt').forEach(th => {
+      th.classList.remove('asc', 'desc');
+      if (th.dataset.c === _sort.k) th.classList.add(_sort.d === 'asc' ? 'asc' : 'desc');
+    });
   }
 
   function renderTable(commMap={},clMap={},receiptMap={}) {

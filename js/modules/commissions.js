@@ -83,6 +83,14 @@ const Commissions = (() => {
     _filtered=list;
     if (_view === 'kanban') renderKanban(cMap);
     else renderTable(cMap);
+    _syncSortHeaders();
+  }
+
+  function _syncSortHeaders() {
+    document.querySelectorAll('#page-content thead th.srt').forEach(th => {
+      th.classList.remove('asc', 'desc');
+      if (th.dataset.c === _sort.k) th.classList.add(_sort.d === 'asc' ? 'asc' : 'desc');
+    });
   }
 
   function renderKanban(cMap={}) {

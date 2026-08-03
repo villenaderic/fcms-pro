@@ -88,7 +88,14 @@ const Clients = (() => {
       (c.notes || '').toLowerCase().includes(q)
     );
     list = H.sortArr(list, _sort.k, _sort.d);
-    _filtered = list; renderTable();
+    _filtered = list; renderTable(); _syncSortHeaders();
+  }
+
+  function _syncSortHeaders() {
+    document.querySelectorAll('#page-content thead th.srt').forEach(th => {
+      th.classList.remove('asc', 'desc');
+      if (th.dataset.c === _sort.k) th.classList.add(_sort.d === 'asc' ? 'asc' : 'desc');
+    });
   }
 
   function renderTable() {
