@@ -126,7 +126,7 @@ const Invoices = (() => {
       return `<tr>
         <td><input type="checkbox" class="cb inv-cb" data-id="${inv.id}" ${_sel.has(inv.id) ? 'checked' : ''}/></td>
         <td class="mono blue" style="font-weight:700;font-size:.82rem">${H.esc(inv.invoiceNumber)}</td>
-        <td style="font-size:.83rem"><strong>${H.esc(cl?.name || '-')}</strong></td>
+        <td style="font-size:.83rem"><div class="avatar-row">${H.avatar(cl?.name || '-',22)}<strong>${H.esc(cl?.name || '-')}</strong></div></td>
         <td class="semi" style="font-size:.8rem">${H.esc(H.trunc(co?.title || inv.description || '-', 26))}</td>
         <td class="mono green" style="font-weight:700">${H.peso(inv.total)}</td>
         <td style="font-size:.79rem;${over ? 'color:var(--red);font-weight:700' : ''} class="muted">${H.fmtDate(inv.dueDate)}${daysOver !== null ? `<div style="font-size:.68rem;color:var(--red)">${Math.abs(daysOver)}d overdue</div>` : ''}</td>

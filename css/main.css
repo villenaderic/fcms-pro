@@ -1110,6 +1110,14 @@ kbd {
 .num-red,   .red   { color: var(--red);   }
 .num-amber, .amber { color: var(--amber); }
 
+.avatar {
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 50%; background: var(--av-bg); color: var(--av-c);
+  font-weight: 800; font-family: var(--font); flex-shrink: 0;
+  letter-spacing: -.02em; line-height: 1;
+}
+.avatar-row { display: flex; align-items: center; gap: 9px; }
+
 .bulk-count { font-size: .83rem; font-weight: 700; color: var(--a); }
 
 /* Sortable table headers */

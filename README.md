@@ -94,6 +94,7 @@ All data is stored locally in your browser's IndexedDB. Nothing is sent to an ex
 ## Changelog
 
 **Latest**
+- Added consistent client avatars (colored initials, unique per client) across the Clients, Commissions, Payments, and Invoices tables, and the client profile view, so the same client is recognizable at a glance everywhere in the app
 - Added recurring commissions with weekly, biweekly, and monthly repeat options
 - Added a unified activity timeline to the client profile view, combining commissions, payments, and invoices
 - Added overdue invoice alerts to the notification bell and an on-row day count for overdue invoices

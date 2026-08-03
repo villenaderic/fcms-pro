@@ -113,7 +113,7 @@ const Payments = (() => {
       const rct=receiptMap[p.id];
       return `<tr>
         <td><input type="checkbox" class="cb py-cb" data-id="${p.id}" ${_sel.has(p.id)?'checked':''}/></td>
-        <td><strong>${H.esc(cl?.name||'-')}</strong></td>
+        <td><div class="avatar-row">${H.avatar(cl?.name||'-',22)}<strong>${H.esc(cl?.name||'-')}</strong></div></td>
         <td class="semi" style="font-size:0.82rem">${H.esc(H.trunc(co?.title||'-',24))}</td>
         <td class="mono green" style="font-weight:700">${H.peso(p.amount)}</td>
         <td><span class="chip ch-blue">${H.esc(p.method||'-')}</span></td>

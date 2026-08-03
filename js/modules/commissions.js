@@ -174,7 +174,7 @@ const Commissions = (() => {
       return `<tr>
         <td><input type="checkbox" class="cb cm-cb" data-id="${c.id}" ${_sel.has(c.id)?'checked':''}/></td>
         <td><strong>${H.esc(H.trunc(c.title,26))}</strong>${c.recurFrequency&&c.recurFrequency!=='none'?` <span title="Repeats ${c.recurFrequency}" style="font-size:0.68rem;color:var(--a)">🔁</span>`:''}${c.clientNote?`<div style="font-size:0.72rem;color:var(--t3)">${H.esc(H.trunc(c.clientNote,30))}</div>`:''}</td>
-        <td class="semi" style="font-size:0.82rem">${H.esc(cl?.name||'-')}</td>
+        <td class="semi" style="font-size:0.82rem"><div class="avatar-row">${H.avatar(cl?.name||'-',22)}<span>${H.esc(cl?.name||'-')}</span></div></td>
         <td class="muted" style="font-size:0.8rem">${H.esc(c.serviceType||'-')}</td>
         <td class="mono" style="font-size:0.82rem">${H.peso(c.price)}</td>
         <td class="mono" style="font-size:0.82rem">${H.peso(c.downPayment)}</td>

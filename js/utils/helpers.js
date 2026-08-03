@@ -10,6 +10,21 @@ const H = (() => {
   const fmtDate = iso => { if(!iso) return '-'; const d=new Date(iso); return isNaN(d)?iso:d.toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'numeric'}); };
   const fmtDT = iso => { if(!iso) return '-'; const d=new Date(iso); return isNaN(d)?iso:d.toLocaleString('en-PH',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}); };
   const daysUntil = iso => { if(!iso) return null; const t=new Date(iso); t.setHours(0,0,0,0); const d=new Date(); d.setHours(0,0,0,0); return Math.ceil((t-d)/86400000); };
+  const AV_COLORS = ['a','green','amber','purple','cyan','rose','teal'];
+  const initials = name => {
+    const parts = String(name||'').trim().split(/\s+/).filter(Boolean);
+    if (!parts.length) return '?';
+    return (parts[0][0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
+  };
+  const avatarColor = name => {
+    let h = 0; const s = String(name||'');
+    for (let i=0;i<s.length;i++) h = (h*31 + s.charCodeAt(i)) >>> 0;
+    return AV_COLORS[h % AV_COLORS.length];
+  };
+  const avatar = (name, size=26) => {
+    const c = avatarColor(name);
+    return `<span class="avatar" style="--av-c:var(--${c});--av-bg:var(--${c}-d);width:${size}px;height:${size}px;min-width:${size}px;font-size:${Math.max(9,Math.round(size*0.4))}px">${esc(initials(name))}</span>`;
+  };
   const toInput = iso => { if(!iso) return ''; const d=new Date(iso); return isNaN(d)?'':d.toISOString().split('T')[0]; };
   const addInterval = (iso, freq) => { if(!iso) return null; const d=new Date(iso); if(isNaN(d)) return null; if(freq==='weekly') d.setDate(d.getDate()+7); else if(freq==='biweekly') d.setDate(d.getDate()+14); else if(freq==='monthly') d.setMonth(d.getMonth()+1); else return null; return d.toISOString().split('T')[0]; };
 
@@ -74,6 +89,6 @@ const H = (() => {
   /* Format number without currency for inputs */
   const numFmt = v => { const n = parseFloat(v) || 0; return n.toLocaleString('en-PH', {minimumFractionDigits:2,maximumFractionDigits:2}); };
 
-  return { uid,rctCode,now,fmtDate,fmtDT,daysUntil,toInput,addInterval,peso,numFmt,num,esc,trunc,hl,pwdStrength,hashPwd,verifyPwd,el,qs,qsa,debounce,validEmail,chip,toCSV,dlFile,dlJSON,readFile,paginate,renderPager,sortArr,search,sanitizeFile };
+  return { uid,rctCode,now,fmtDate,fmtDT,daysUntil,toInput,addInterval,avatar,initials,peso,numFmt,num,esc,trunc,hl,pwdStrength,hashPwd,verifyPwd,el,qs,qsa,debounce,validEmail,chip,toCSV,dlFile,dlJSON,readFile,paginate,renderPager,sortArr,search,sanitizeFile };
 })();
 

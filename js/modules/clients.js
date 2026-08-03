@@ -113,13 +113,12 @@ const Clients = (() => {
       const numComms = (_commsByClient[c.id] || []).length;
       const paid     = _paidByClient[c.id] || 0;
       const remain   = _remainByClient[c.id] || 0;
-      const initials = (c.name || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
       const hasActive = (_commsByClient[c.id] || []).some(cm => ['Pending','In Progress','Revision'].includes(cm.status));
       return `<tr>
         <td><input type="checkbox" class="cb cl-cb" data-id="${c.id}" ${_sel.has(c.id) ? 'checked' : ''}/></td>
         <td>
-          <div style="display:flex;align-items:center;gap:9px">
-            <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--purple));display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;color:#fff;flex-shrink:0">${H.esc(initials)}</div>
+          <div class="avatar-row">
+            ${H.avatar(c.name, 30)}
             <div>
               <div style="font-weight:700;font-size:.85rem">${H.esc(c.name)}</div>
               ${hasActive ? '<div style="font-size:.68rem;color:var(--green)">● Active work</div>' : ''}
@@ -174,14 +173,13 @@ const Clients = (() => {
       ...clientPays.map(p  => ({ date: p.date,      type: 'Payment',    dot: 'green', label: 'Payment received', sub: p.method || '', amount: p.amount })),
       ...clientInvs.map(i  => ({ date: i.issueDate || i.createdAt, type: 'Invoice', dot: 'amber', label: `Invoice ${i.invoiceNumber || ''}`, sub: i.status, amount: i.total })),
     ].filter(t => t.date).sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 40);
-    const initials    = (c.name || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
 
     Modal.open({
       title: 'Client Profile', size: 'lg',
       body: `
         <div style="display:flex;gap:16px;margin-bottom:18px;flex-wrap:wrap">
           <div style="text-align:center;flex-shrink:0">
-            <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--purple));display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:800;color:#fff;margin:0 auto 8px">${H.esc(initials)}</div>
+            <div style="margin:0 auto 8px">${H.avatar(c.name, 64)}</div>
             <div style="font-size:.72rem;color:var(--t3)">Client ID</div>
             <div style="font-size:.68rem;font-family:var(--mono);color:var(--t3)">${c.id.slice(-8)}</div>
           </div>
