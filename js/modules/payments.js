@@ -24,7 +24,7 @@ const Payments = (() => {
       <div class="pg-head">
         <div><div class="pg-title">Payments</div><div class="pg-sub">${payments.length} transaction${payments.length!==1?'s':''}</div></div>
         <div class="pg-acts">
-          <button class="btn btn-ghost btn-sm" onclick="Payments.exportCSV()">↓ CSV</button>
+          <button class="btn btn-ghost btn-sm" onclick="Payments.exportCSV()" title="Downloads a spreadsheet file you can open in Excel or Google Sheets">Export to Excel</button>
           <button class="btn btn-primary" onclick="Payments.openForm()">+ Record Payment</button>
         </div>
       </div>

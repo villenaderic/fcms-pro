@@ -31,7 +31,7 @@ const Commissions = (() => {
             </button>
           </div>
           ${_filterClientId?`<button class="btn btn-ghost btn-sm" onclick="Commissions.clearFilter()">✕ Clear Filter</button>`:''}
-          <button class="btn btn-ghost btn-sm" onclick="Commissions.exportCSV()">↓ CSV</button>
+          <button class="btn btn-ghost btn-sm" onclick="Commissions.exportCSV()" title="Downloads a spreadsheet file you can open in Excel or Google Sheets">Export to Excel</button>
           <button class="btn btn-primary" onclick="Commissions.openForm()">+ New Commission</button>
         </div>
       </div>

@@ -15,7 +15,7 @@ const Logs = (() => {
       <div class="pg-head">
         <div><div class="pg-title">Activity Logs</div><div class="pg-sub">${_all.length} entries</div></div>
         <div class="pg-acts">
-          <button class="btn btn-ghost btn-sm" onclick="Logs.exportCSV()">↓ CSV</button>
+          <button class="btn btn-ghost btn-sm" onclick="Logs.exportCSV()" title="Downloads a spreadsheet file you can open in Excel or Google Sheets">Export to Excel</button>
           <button class="btn btn-danger btn-sm" onclick="Logs.clearAll()">Clear Logs</button>
         </div>
       </div>

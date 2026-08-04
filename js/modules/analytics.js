@@ -67,7 +67,7 @@ const Analytics = (() => {
         </div>
         <div class="pg-acts">
           <button class="btn btn-ghost btn-sm" onclick="Analytics.render()">↺ Refresh</button>
-          <button class="btn btn-ghost btn-sm" onclick="Analytics.exportReport()">↓ Export Report</button>
+          <button class="btn btn-ghost btn-sm" onclick="Analytics.exportReport()" title="Downloads a spreadsheet file you can open in Excel or Google Sheets">Export to Excel</button>
         </div>
       </div>
 

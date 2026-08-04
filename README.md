@@ -108,6 +108,8 @@ If there is no Unblock checkbox, Smart App Control is set to a strict mode. Open
 ## Changelog
 
 **Latest**
+- Redesigned the login and setup screens as a split layout with a background image and a short feature highlight, replacing the plain centered card
+- Renamed every "CSV" export button to "Export to Excel" with a plain-language tooltip, and removed the arrow-only icon buttons on Backup, Analytics, and Receipts in favor of readable labels like "Download Full Backup" and "Save as Image"
 - Broadened the app's focus beyond freelance/creative work: added client type classification (individual, business, government, school, nonprofit, startup), and expanded the default service type list to include consulting, software development, admin work, training, and support
 - Added breadcrumb navigation showing the current page and, within Settings, the active tab
 - Replaced the placeholder text logo with a proper mark, applied consistently across the sidebar, login and setup screens, the app icon, and printed invoices

@@ -23,49 +23,77 @@
 
 <!-- SETUP -->
 <div id="setup-screen" class="overlay hidden">
-  <div class="auth-panel">
-    <div class="auth-wordmark"><div class="auth-logo"><svg viewBox="0 0 32 32" width="60%" height="60%"><rect x="6" y="17" width="5" height="9" rx="1.6" fill="#fff" opacity="0.55"/><rect x="13.5" y="10.5" width="5" height="15.5" rx="1.6" fill="#fff" opacity="0.85"/><rect x="21" y="4" width="5" height="22" rx="1.6" fill="#fff"/></svg></div><div><div class="auth-name">FCMS Pro</div><div class="auth-tag">Client &amp; Commission Manager</div></div></div>
-    <div class="auth-h">Initial Setup</div>
-    <div class="auth-sub">Create your admin account - one time only.</div>
-    <form id="setup-form" novalidate autocomplete="off">
-      <div class="form-2">
-        <div class="field"><label>Business Name <span class="req">*</span></label><input id="su-biz" placeholder="Creative Studios" required/></div>
-        <div class="field"><label>Your Name</label><input id="su-free" placeholder="Full name"/></div>
+  <div class="auth-split">
+    <div class="auth-visual">
+      <div class="auth-visual-scrim"></div>
+      <div class="auth-visual-content">
+        <div class="auth-visual-h">Run your client work, your way.</div>
+        <div class="auth-visual-sub">One place for clients, commissions, quotes, payments, and invoices, whether you work with individuals, businesses, schools, or government offices.</div>
+        <div class="auth-visual-list">
+          <div class="avl-item"><span class="avl-dot"></span>Track every client and project in one dashboard</div>
+          <div class="avl-item"><span class="avl-dot"></span>Get paid faster with built-in invoices and receipts</div>
+          <div class="avl-item"><span class="avl-dot"></span>Works fully offline, your data stays on your device</div>
+        </div>
       </div>
-      <div class="form-2">
-        <div class="field"><label>Currency</label><input id="su-cur" placeholder="₱" maxlength="3" value="₱"/></div>
-        <div class="field"><label>Contact Number</label><input id="su-phone" placeholder="+63 9XX XXX XXXX"/></div>
-      </div>
-      <div class="field"><label>Admin Username <span class="req">*</span></label><input id="su-user" placeholder="admin" autocomplete="off" required/></div>
-      <div class="field"><label>Password <span class="req">*</span></label>
-        <div class="input-wrap"><input type="password" id="su-pass" placeholder="Min. 6 characters" required/>
-          <span class="input-action" onclick="App.togglePass('su-pass',this)">Show</span></div>
-        <div class="str-bar" id="su-bar"></div><div class="str-lbl" id="su-lbl"></div>
-      </div>
-      <div class="field"><label>Confirm Password <span class="req">*</span></label>
-        <div class="input-wrap"><input type="password" id="su-conf" placeholder="Repeat password" required/>
-          <span class="input-action" onclick="App.togglePass('su-conf',this)">Show</span></div>
-      </div>
-      <button type="submit" class="btn btn-primary btn-block" style="margin-top:6px">Create Account &amp; Launch</button>
-    </form>
+    </div>
+    <div class="auth-panel">
+      <div class="auth-wordmark"><div class="auth-logo"><svg viewBox="0 0 32 32" width="60%" height="60%"><rect x="6" y="17" width="5" height="9" rx="1.6" fill="#fff" opacity="0.55"/><rect x="13.5" y="10.5" width="5" height="15.5" rx="1.6" fill="#fff" opacity="0.85"/><rect x="21" y="4" width="5" height="22" rx="1.6" fill="#fff"/></svg></div><div><div class="auth-name">FCMS Pro</div><div class="auth-tag">Client &amp; Commission Manager</div></div></div>
+      <div class="auth-h">Initial Setup</div>
+      <div class="auth-sub">Create your admin account - one time only.</div>
+      <form id="setup-form" novalidate autocomplete="off">
+        <div class="form-2">
+          <div class="field"><label>Business Name <span class="req">*</span></label><input id="su-biz" placeholder="Creative Studios" required/></div>
+          <div class="field"><label>Your Name</label><input id="su-free" placeholder="Full name"/></div>
+        </div>
+        <div class="form-2">
+          <div class="field"><label>Currency</label><input id="su-cur" placeholder="₱" maxlength="3" value="₱"/></div>
+          <div class="field"><label>Contact Number</label><input id="su-phone" placeholder="+63 9XX XXX XXXX"/></div>
+        </div>
+        <div class="field"><label>Admin Username <span class="req">*</span></label><input id="su-user" placeholder="admin" autocomplete="off" required/></div>
+        <div class="field"><label>Password <span class="req">*</span></label>
+          <div class="input-wrap"><input type="password" id="su-pass" placeholder="Min. 6 characters" required/>
+            <span class="input-action" onclick="App.togglePass('su-pass',this)">Show</span></div>
+          <div class="str-bar" id="su-bar"></div><div class="str-lbl" id="su-lbl"></div>
+        </div>
+        <div class="field"><label>Confirm Password <span class="req">*</span></label>
+          <div class="input-wrap"><input type="password" id="su-conf" placeholder="Repeat password" required/>
+            <span class="input-action" onclick="App.togglePass('su-conf',this)">Show</span></div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" style="margin-top:6px">Create Account &amp; Launch</button>
+      </form>
+    </div>
   </div>
 </div>
 
 <!-- LOGIN -->
 <div id="login-screen" class="overlay hidden">
-  <div class="auth-panel">
-    <div class="auth-wordmark"><div class="auth-logo"><svg viewBox="0 0 32 32" width="60%" height="60%"><rect x="6" y="17" width="5" height="9" rx="1.6" fill="#fff" opacity="0.55"/><rect x="13.5" y="10.5" width="5" height="15.5" rx="1.6" fill="#fff" opacity="0.85"/><rect x="21" y="4" width="5" height="22" rx="1.6" fill="#fff"/></svg></div><div><div class="auth-name">FCMS Pro</div><div class="auth-tag">Client &amp; Commission Manager</div></div></div>
-    <div class="auth-h">Sign In</div>
-    <div class="auth-sub" id="login-biz-name">Welcome back</div>
-    <div id="login-err" class="auth-alert err hidden"></div>
-    <form id="login-form" novalidate>
-      <div class="field"><label>Username</label><input id="li-user" autocomplete="username" placeholder="Username"/></div>
-      <div class="field"><label>Password</label>
-        <div class="input-wrap"><input type="password" id="li-pass" autocomplete="current-password" placeholder="Password"/>
-          <span class="input-action" onclick="App.togglePass('li-pass',this)">Show</span></div>
+  <div class="auth-split">
+    <div class="auth-visual">
+      <div class="auth-visual-scrim"></div>
+      <div class="auth-visual-content">
+        <div class="auth-visual-h">Run your client work, your way.</div>
+        <div class="auth-visual-sub">One place for clients, commissions, quotes, payments, and invoices, whether you work with individuals, businesses, schools, or government offices.</div>
+        <div class="auth-visual-list">
+          <div class="avl-item"><span class="avl-dot"></span>Track every client and project in one dashboard</div>
+          <div class="avl-item"><span class="avl-dot"></span>Get paid faster with built-in invoices and receipts</div>
+          <div class="avl-item"><span class="avl-dot"></span>Works fully offline, your data stays on your device</div>
+        </div>
       </div>
-      <button type="submit" class="btn btn-primary btn-block" id="li-btn">Sign In</button>
-    </form>
+    </div>
+    <div class="auth-panel">
+      <div class="auth-wordmark"><div class="auth-logo"><svg viewBox="0 0 32 32" width="60%" height="60%"><rect x="6" y="17" width="5" height="9" rx="1.6" fill="#fff" opacity="0.55"/><rect x="13.5" y="10.5" width="5" height="15.5" rx="1.6" fill="#fff" opacity="0.85"/><rect x="21" y="4" width="5" height="22" rx="1.6" fill="#fff"/></svg></div><div><div class="auth-name">FCMS Pro</div><div class="auth-tag">Client &amp; Commission Manager</div></div></div>
+      <div class="auth-h">Sign In</div>
+      <div class="auth-sub" id="login-biz-name">Welcome back</div>
+      <div id="login-err" class="auth-alert err hidden"></div>
+      <form id="login-form" novalidate>
+        <div class="field"><label>Username</label><input id="li-user" autocomplete="username" placeholder="Username"/></div>
+        <div class="field"><label>Password</label>
+          <div class="input-wrap"><input type="password" id="li-pass" autocomplete="current-password" placeholder="Password"/>
+            <span class="input-action" onclick="App.togglePass('li-pass',this)">Show</span></div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" id="li-btn">Sign In</button>
+      </form>
+    </div>
   </div>
 </div>
 

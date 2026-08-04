@@ -26,7 +26,7 @@ const Quotes = (() => {
           <div class="pg-sub">${quotes.length} quote${quotes.length !== 1 ? 's' : ''}</div>
         </div>
         <div class="pg-acts">
-          <button class="btn btn-ghost btn-sm" onclick="Quotes.exportCSV()">↓ CSV</button>
+          <button class="btn btn-ghost btn-sm" onclick="Quotes.exportCSV()" title="Downloads a spreadsheet file you can open in Excel or Google Sheets">Export to Excel</button>
           <button class="btn btn-primary" onclick="Quotes.openForm()">+ New Quote</button>
         </div>
       </div>

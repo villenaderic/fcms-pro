@@ -52,7 +52,7 @@ const Receipts = (() => {
       <div class="pg-head">
         <div><div class="pg-title">Receipts</div><div class="pg-sub">${_all.length} receipt${_all.length!==1?'s':''} - auto-generated on payment</div></div>
         <div class="pg-acts">
-          <button class="btn btn-ghost btn-sm" onclick="Receipts.exportCSV()">↓ CSV</button>
+          <button class="btn btn-ghost btn-sm" onclick="Receipts.exportCSV()" title="Downloads a spreadsheet file you can open in Excel or Google Sheets">Export to Excel</button>
         </div>
       </div>
       <div class="toolbar">
@@ -118,8 +118,8 @@ const Receipts = (() => {
       <td class="mono muted" style="font-size:0.72rem;letter-spacing:1px">${H.esc(r.verificationCode||'-')}</td>
       <td class="td-acts">
         <button class="btn btn-ghost btn-xs" onclick="Receipts.preview('${r.id}')">Preview</button>
-        <button class="btn btn-primary btn-xs" onclick="Receipts.saveImg('${r.id}')">↓ Image</button>
-        <button class="btn btn-ghost btn-xs" onclick="Receipts.savePDF('${r.id}')">↓ PDF</button>
+        <button class="btn btn-primary btn-xs" onclick="Receipts.saveImg('${r.id}')">Save as Image</button>
+        <button class="btn btn-ghost btn-xs" onclick="Receipts.savePDF('${r.id}')">Save as PDF</button>
         <button class="btn btn-ghost btn-xs" onclick="Receipts.printImg('${r.id}')">🖨</button>
       </td>
     </tr>`).join('');

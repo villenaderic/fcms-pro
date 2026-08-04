@@ -17,7 +17,7 @@ const Backup = (() => {
           <div class="pg-sub">${totalRecords.toLocaleString()} total records across ${STORES.length} stores</div>
         </div>
         <div class="pg-acts">
-          <button class="btn btn-primary" onclick="Backup.exportAll()">↓ Export Full Backup</button>
+          <button class="btn btn-primary" onclick="Backup.exportAll()">Download Full Backup</button>
         </div>
       </div>
 
@@ -37,7 +37,7 @@ const Backup = (() => {
         <div class="bk-tile">
           <h3>📊 Export Data as CSV</h3>
           <p>Export individual data stores as CSV spreadsheets for use in Excel or Google Sheets. Choose which data to export.</p>
-          <button class="btn btn-ghost btn-sm" onclick="Backup.exportCSVMenu()">Export CSV</button>
+          <button class="btn btn-ghost btn-sm" onclick="Backup.exportCSVMenu()">Export to Excel</button>
         </div>
         <div class="bk-tile">
           <h3>🔄 Auto-Backup Reminder</h3>
@@ -61,7 +61,7 @@ const Backup = (() => {
                 <td style="font-weight:600;text-transform:capitalize">${c.store}</td>
                 <td class="mono" style="color:${c.count > 0 ? 'var(--green)' : 'var(--t3)'}">${c.count.toLocaleString()}</td>
                 <td class="td-acts">
-                  <button class="btn btn-ghost btn-xs" onclick="Backup.exportStore('${c.store}')">Export CSV</button>
+                  <button class="btn btn-ghost btn-xs" onclick="Backup.exportStore('${c.store}')">Export to Excel</button>
                   ${c.count > 0 ? `<button class="btn btn-danger btn-xs" onclick="Backup.clearStore('${c.store}')">Clear</button>` : ''}
                 </td>
               </tr>`).join('')}

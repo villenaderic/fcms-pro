@@ -31,7 +31,7 @@ const Invoices = (() => {
           <div class="pg-sub">${invoices.length} invoice${invoices.length !== 1 ? 's' : ''}</div>
         </div>
         <div class="pg-acts">
-          <button class="btn btn-ghost btn-sm" onclick="Invoices.exportCSV()">↓ CSV</button>
+          <button class="btn btn-ghost btn-sm" onclick="Invoices.exportCSV()" title="Downloads a spreadsheet file you can open in Excel or Google Sheets">Export to Excel</button>
           <button class="btn btn-primary" onclick="Invoices.openForm()">+ New Invoice</button>
         </div>
       </div>

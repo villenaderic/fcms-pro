@@ -1,7 +1,8 @@
-/* FCMS Pro Service Worker v4.0 */
-const CACHE = 'fcms-v4';
+/* FCMS Pro Service Worker v4.1 */
+const CACHE = 'fcms-v4-1';
 const CORE  = [
   './', './index.html', './css/main.css', './manifest.json',
+  './assets/auth-background.jpg',
   './js/app.js',
   './js/utils/helpers.js',  './js/utils/db.js',
   './js/utils/notify.js',   './js/utils/modal.js',
