@@ -4,6 +4,17 @@ const Clients = (() => {
   let _all = [], _filtered = [], _page = 1, _sort = { k: 'dateAdded', d: 'desc' };
   let _sel = new Set();
   let _commsByClient = {}, _paidByClient = {}, _remainByClient = {};
+  const CLIENT_TYPES = [
+    ['individual', 'Individual'],
+    ['business',   'Business / Company'],
+    ['government', 'Government / Public Sector'],
+    ['school',     'School / Institution'],
+    ['nonprofit',  'Nonprofit / NGO'],
+    ['startup',    'Startup / Prototype'],
+    ['other',      'Other'],
+  ];
+  const typeLabel = t => (CLIENT_TYPES.find(([k]) => k === t) || [null, 'Individual'])[1];
+  const typeColor = t => ({ individual:'a', business:'green', government:'purple', school:'cyan', nonprofit:'amber', startup:'rose', other:'teal' }[t] || 'a');
 
   async function render() {
     const [clients, comms, pays] = await Promise.all([
@@ -40,6 +51,10 @@ const Clients = (() => {
           <option value="name-asc">Name A–Z</option>
           <option value="name-desc">Name Z–A</option>
         </select>
+        <select id="cl-type-filter">
+          <option value="">All Client Types</option>
+          ${CLIENT_TYPES.map(([k,lbl])=>`<option value="${k}">${lbl}</option>`).join('')}
+        </select>
         <button class="btn btn-ghost btn-sm" onclick="Clients.selAll()">☐ All</button>
       </div>
       <div id="cl-bulk" class="bulk-bar hidden">
@@ -65,6 +80,7 @@ const Clients = (() => {
       <div id="cl-pager" class="pager"></div>`;
 
     H.el('cl-q').addEventListener('input', H.debounce(() => { _page = 1; applyFilter(); }, 260));
+    H.el('cl-type-filter').addEventListener('change', () => { _page = 1; applyFilter(); });
     H.el('cl-sort').addEventListener('change', () => {
       const [k, d] = H.el('cl-sort').value.split('-');
       _sort = { k, d }; _page = 1; applyFilter();
@@ -79,8 +95,10 @@ const Clients = (() => {
   }
 
   function applyFilter() {
-    const q = (H.el('cl-q')?.value || '').trim().toLowerCase();
+    const q  = (H.el('cl-q')?.value || '').trim().toLowerCase();
+    const ty = H.el('cl-type-filter')?.value || '';
     let list = [..._all];
+    if (ty) list = list.filter(c => (c.clientType || 'individual') === ty);
     if (q) list = list.filter(c =>
       (c.name || '').toLowerCase().includes(q) ||
       (c.phone || '').toLowerCase().includes(q) ||
@@ -102,12 +120,12 @@ const Clients = (() => {
     const { items, pages } = H.paginate(_filtered, _page, PER);
     const tbody = H.el('cl-tbody'); if (!tbody) return;
     if (!items.length) {
-      const searching = (H.el('cl-q')?.value || '').trim().length > 0;
+      const searching = (H.el('cl-q')?.value || '').trim().length > 0 || (H.el('cl-type-filter')?.value || '') !== '';
       tbody.innerHTML = searching ? `<tr><td colspan="8"><div class="empty">
         <svg class="empty-ico" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
         <div class="empty-ttl">No matches found</div>
         <div class="empty-sub">Try a different name, phone number, or email.</div>
-        <div class="empty-cta"><button class="btn btn-ghost btn-sm" onclick="H.el('cl-q').value='';Clients.render()">Clear search</button></div>
+        <div class="empty-cta"><button class="btn btn-ghost btn-sm" onclick="Clients.render()">Clear filters</button></div>
       </div></td></tr>` : `<tr><td colspan="8"><div class="empty">
         <svg class="empty-ico" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
         <div class="empty-ttl">No clients yet</div>
@@ -128,6 +146,7 @@ const Clients = (() => {
             ${H.avatar(c.name, 30)}
             <div>
               <div style="font-weight:700;font-size:.85rem">${H.esc(c.name)}</div>
+              <span class="chip" style="background:var(--${typeColor(c.clientType)}-d);color:var(--${typeColor(c.clientType)});font-size:.63rem;padding:1px 6px">${H.esc(typeLabel(c.clientType))}</span>
               ${hasActive ? '<div style="font-size:.68rem;color:var(--green)">● Active work</div>' : ''}
             </div>
           </div>
@@ -192,6 +211,7 @@ const Clients = (() => {
           </div>
           <div style="flex:1;min-width:180px">
             <div style="font-size:1.1rem;font-weight:800;margin-bottom:4px">${H.esc(c.name)}</div>
+            <span class="chip" style="background:var(--${typeColor(c.clientType)}-d);color:var(--${typeColor(c.clientType)});margin-bottom:6px">${H.esc(typeLabel(c.clientType))}</span>
             ${c.phone ? `<div style="font-size:.83rem;color:var(--t2);margin-bottom:2px">📞 ${H.esc(c.phone)}</div>` : ''}
             ${c.email ? `<div style="font-size:.83rem;color:var(--t2);margin-bottom:2px">✉ ${H.esc(c.email)}</div>` : ''}
             ${c.notes ? `<div style="font-size:.8rem;color:var(--t3);margin-top:6px;font-style:italic">${H.esc(c.notes)}</div>` : ''}
@@ -251,8 +271,11 @@ const Clients = (() => {
     Modal.open({
       title: c ? 'Edit Client' : 'Add Client', size: 'sm',
       body: `
-        <div class="field"><label>Full Name <span class="req">*</span></label>
-          <input id="cf-name" value="${H.esc(c?.name || '')}" placeholder="Client full name" autocomplete="off"/></div>
+        <div class="field"><label>Full Name / Organization <span class="req">*</span></label>
+          <input id="cf-name" value="${H.esc(c?.name || '')}" placeholder="Client, business, or organization name" autocomplete="off"/></div>
+        <div class="field"><label>Client Type</label>
+          <select id="cf-type">${CLIENT_TYPES.map(([k,lbl])=>`<option value="${k}" ${(c?.clientType||'individual')===k?'selected':''}>${lbl}</option>`).join('')}</select>
+        </div>
         <div class="form-2">
           <div class="field"><label>Phone Number</label>
             <input id="cf-phone" value="${H.esc(c?.phone || '')}" placeholder="+63 9XX XXX XXXX"/></div>
@@ -280,6 +303,7 @@ const Clients = (() => {
       const existing = id ? await DB.getById('clients', id) : null;
       const rec = {
         id: id || H.uid('cli'), name, phone, email,
+        clientType: H.el('cf-type')?.value || 'individual',
         social: (H.el('cf-social')?.value || '').trim(),
         notes:  (H.el('cf-notes')?.value  || '').trim(),
         dateAdded: existing?.dateAdded || H.now(),
@@ -331,10 +355,10 @@ const Clients = (() => {
   }
 
   async function exportCSV() {
-    const h = ['ID', 'Name', 'Phone', 'Email', 'Social', 'Notes', 'Date Added',
+    const h = ['ID', 'Name', 'Client Type', 'Phone', 'Email', 'Social', 'Notes', 'Date Added',
                'Total Commissions', 'Total Paid', 'Outstanding Balance'];
     const rows = _filtered.map(c => [
-      c.id, c.name, c.phone || '', c.email || '', c.social || '', c.notes || '',
+      c.id, c.name, typeLabel(c.clientType), c.phone || '', c.email || '', c.social || '', c.notes || '',
       H.fmtDate(c.dateAdded),
       (_commsByClient[c.id] || []).length,
       _paidByClient[c.id] || 0,

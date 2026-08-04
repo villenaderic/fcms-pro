@@ -22,6 +22,24 @@ const App = (() => {
     quotes:      p => Quotes.render(p),
   };
 
+  const PAGE_LABELS = {
+    dashboard:'Dashboard', analytics:'Analytics', clients:'Clients', commissions:'Commissions',
+    payments:'Payments', receipts:'Receipts', expenses:'Expenses', invoices:'Invoices',
+    logs:'Activity Logs', backup:'Backup & Restore', settings:'Settings', templates:'Templates',
+    goals:'Goals', quotes:'Quotes'
+  };
+
+  function setBreadcrumb(parts) {
+    const el = H.el('breadcrumb'); if (!el) return;
+    el.innerHTML = parts.filter(Boolean).map((p, i, arr) => i === arr.length - 1
+      ? `<span class="bc-current">${H.esc(p)}</span>`
+      : `<span class="bc-part">${H.esc(p)}</span><span class="bc-sep">/</span>`
+    ).join('');
+  }
+  function setBreadcrumbTail(tail) {
+    setBreadcrumb([PAGE_LABELS[_page] || '', tail]);
+  }
+
   let _page    = 'dashboard';
   let _pwa     = null;          // deferred install prompt
   let _kbBuf   = '';            // two-key shortcut buffer
@@ -175,6 +193,7 @@ const App = (() => {
   async function navigate(page, params = {}) {
     if (!ROUTES[page]) page = 'dashboard';
     _page = page;
+    setBreadcrumb([PAGE_LABELS[page] || 'Dashboard']);
 
     document.querySelectorAll('.nav-item[data-page]').forEach(el => {
       el.classList.toggle('active', el.dataset.page === page);
@@ -637,6 +656,7 @@ const App = (() => {
     openSidebar, closeSidebar, toggleSidebar,
     openShortcuts, closeShortcuts,
     setTheme,
+    setBreadcrumb, setBreadcrumbTail,
     refreshBadge: _refreshBadge,
   };
 })();

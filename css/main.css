@@ -1110,6 +1110,16 @@ kbd {
 .num-red,   .red   { color: var(--red);   }
 .num-amber, .amber { color: var(--amber); }
 
+.breadcrumb {
+  display: flex; align-items: center; gap: 6px;
+  padding: 9px 20px 0; font-size: .71rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .07em;
+}
+.bc-part { color: var(--t3); }
+.bc-sep  { color: var(--t3); opacity: .5; }
+.bc-current { color: var(--a); }
+@media (max-width: 600px) { .breadcrumb { padding: 8px 12px 0; font-size: .66rem; } }
+
 .avatar {
   display: inline-flex; align-items: center; justify-content: center;
   border-radius: 50%; background: var(--av-bg); color: var(--av-c);

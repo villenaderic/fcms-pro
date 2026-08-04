@@ -7,11 +7,16 @@ const Settings = (() => {
   const set    = (k, v) => { const s = getAll(); s[k] = v; saveAll(s); };
 
   let _activeTab = 'business';
+  const TAB_LABELS = {
+    business: 'Business Info', account: 'Account', appearance: 'Appearance',
+    services: 'Services', documents: 'Documents', danger: 'Danger Zone'
+  };
 
   async function render() {
+    App.setBreadcrumbTail(TAB_LABELS[_activeTab] || _activeTab);
     const s     = getAll();
     const admin = await Auth.getAdminInfo();
-    const svcs  = get('serviceTypes', ['Logo Design','UI/UX Design','Web Development','Illustration','Animation','Video Editing','Copywriting','Social Media','Branding','Print Design','Other']);
+    const svcs  = get('serviceTypes', ['Logo Design','UI/UX Design','Web Development','Software Development','Illustration','Animation','Video Editing','Copywriting','Social Media','Photography','Branding','Print Design','Consulting','Data Entry & Admin','Training / Workshop','Maintenance & Support','Research & Documentation','Other']);
 
     H.el('page-content').innerHTML = `
       <div class="pg-head">
@@ -157,6 +162,7 @@ const Settings = (() => {
 
   function switchTab(tab) {
     _activeTab = tab;
+    App.setBreadcrumbTail(TAB_LABELS[tab] || tab);
     document.querySelectorAll('.settings-nav-item').forEach(el => {
       el.classList.toggle('active', el.textContent.toLowerCase().includes(tab) || el.onclick?.toString().includes(tab));
     });

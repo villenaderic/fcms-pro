@@ -6,7 +6,7 @@ const Commissions = (() => {
   let _cMap={}; // client lookup map, shared by selAll/clearSel/render
   let _view = localStorage.getItem('fcms-comm-view') || 'table';
   const STATUSES=['Pending','In Progress','Revision','Completed','Delivered','Cancelled'];
-  const DEFAULT_SERVICES=['Logo Design','UI/UX Design','Web Development','Illustration','Animation','Video Editing','Copywriting','Social Media','Photography','Branding','Print Design','Other'];
+  const DEFAULT_SERVICES=['Logo Design','UI/UX Design','Web Development','Software Development','Illustration','Animation','Video Editing','Copywriting','Social Media','Photography','Branding','Print Design','Consulting','Data Entry & Admin','Training / Workshop','Maintenance & Support','Research & Documentation','Other'];
   const getServices=()=>Settings.get('serviceTypes',DEFAULT_SERVICES);
 
   async function render(params={}) {
@@ -387,7 +387,7 @@ const Commissions = (() => {
   async function openFormWithData(data = {}) {
   const clients = await DB.getAll('clients');
   const s = Settings.getAll();
-  const services = Settings.get('serviceTypes', ['Logo Design','Web Development','Illustration','Other']);
+  const services = getServices();
   const today = new Date().toISOString().split('T')[0];
   Modal.open({
     title: 'New Commission', size: 'lg',

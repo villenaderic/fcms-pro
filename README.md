@@ -1,10 +1,11 @@
 # FCMS Pro
 
-FCMS Pro is a browser-based Freelance Commission Management System built for freelancers who need to track clients, commissions, payments, and money in and out without setting up a full server stack. It runs as a Progressive Web App, works fully offline using IndexedDB for storage, and can optionally connect to a small PHP backend for server-rendered receipts, CSV exports, and email sending.
+FCMS Pro is a browser-based client and commission management system built for freelancers, agencies, and small businesses who work with a wide range of clients, from individuals and startups to schools, nonprofits, government offices, and companies. It runs as a Progressive Web App, works fully offline using IndexedDB for storage, and can optionally connect to a small PHP backend for server-rendered receipts, CSV exports, and email sending.
 
 ## Features
 
 - **Client management** - store client details, contact information, and history in one place
+- **Client type tracking** - classify each client as an individual, business, government office, school, nonprofit, or startup, with filtering and a colored tag shown throughout the app
 - **Client profile view** - a full activity timeline per client combining commissions, payments, and invoices, alongside lifetime totals and outstanding balance
 - **Commissions and quotes** - create quotes, convert them into commissions, and track status from start to delivery, in either a table or a board (kanban) view
 - **Recurring commissions** - mark a commission to repeat weekly, every two weeks, or monthly; the next occurrence is created automatically once the current one is marked Delivered
@@ -17,6 +18,7 @@ FCMS Pro is a browser-based Freelance Commission Management System built for fre
 - **Offline-first PWA** - installs to your desktop or phone and works without an internet connection
 - **Local authentication** - single admin account with a hashed password, session expiry, and lockout after repeated failed logins
 - **Keyboard shortcuts** - press `/` to search, `?` to see all shortcuts, and two-key sequences (like `gc` for Clients or `nw` for a new commission) to jump around quickly
+- **Breadcrumb navigation** - always shows where you are in the app, including the active tab within Settings
 
 ## Tech stack
 
@@ -91,9 +93,25 @@ fcms-pro/
 
 All data is stored locally in your browser's IndexedDB. Nothing is sent to an external server unless you configure and use the optional PHP email feature. Regular backups are recommended since clearing your browser data will remove everything stored in the app.
 
+## Troubleshooting
+
+**Windows blocks the downloaded file with "Smart App Control blocked a file that may be unsafe"**
+
+This is a Windows 11 security feature that flags any downloaded `.zip` or `.bat` file it does not recognize, not something specific to FCMS Pro. To get past it:
+
+1. Right-click the downloaded file and choose **Properties**
+2. At the bottom of the General tab, check the **Unblock** box, then **Apply**
+3. Extract or run the file normally
+
+If there is no Unblock checkbox, Smart App Control is set to a strict mode. Open **Windows Security → App & browser control → Smart App Control settings** and switch it to **Evaluation** or **Off**, then unblock the file as above.
+
 ## Changelog
 
 **Latest**
+- Broadened the app's focus beyond freelance/creative work: added client type classification (individual, business, government, school, nonprofit, startup), and expanded the default service type list to include consulting, software development, admin work, training, and support
+- Added breadcrumb navigation showing the current page and, within Settings, the active tab
+- Replaced the placeholder text logo with a proper mark, applied consistently across the sidebar, login and setup screens, the app icon, and printed invoices
+- Improved the printed invoice letterhead with business address, contact details, and tax ID, and added an optional PO / reference number field for clients that require one
 - Fixed the sort direction arrow on Clients, Commissions, and Payments column headers, which changed the sort order correctly but never visually updated to show which column or direction was active
 - Added clickable sortable columns to the Invoices table (Invoice #, Amount, Due Date, Status), matching the other three list views
 - Added consistent client avatars (colored initials, unique per client) across the Clients, Commissions, Payments, and Invoices tables, and the client profile view, so the same client is recognizable at a glance everywhere in the app

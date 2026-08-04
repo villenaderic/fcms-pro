@@ -220,6 +220,9 @@ const Invoices = (() => {
           <div class="field"><label>Due Date</label>
             <input type="date" id="invf-due" value="${H.toInput(inv?.dueDate || due30)}"/></div>
         </div>
+        <div class="field"><label>PO / Reference Number</label>
+          <input id="invf-po" value="${H.esc(inv?.poNumber || '')}" placeholder="Purchase order or client reference number, if required"/>
+        </div>
         <div class="form-2">
           <div class="field"><label>Status</label>
             <select id="invf-status">
@@ -281,6 +284,7 @@ const Invoices = (() => {
         subtotal: sub, discount: disc, tax, total,
         issueDate: H.el('invf-issue')?.value || H.now().split('T')[0],
         dueDate:   H.el('invf-due')?.value   || '',
+        poNumber: (H.el('invf-po')?.value || '').trim(),
         status: forceStatus || H.el('invf-status')?.value || 'Draft',
         terms:  (H.el('invf-terms')?.value  || '').trim(),
         notes:  (H.el('invf-notes')?.value  || '').trim(),
@@ -380,8 +384,11 @@ const Invoices = (() => {
     win.document.write(`<!DOCTYPE html><html><head><title>${inv.invoiceNumber}</title>
     <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Inter,Arial,sans-serif;font-size:13px;color:#1a202c;background:#fff}
     .wrap{max-width:680px;margin:0 auto;padding:32px}
-    .hd{background:linear-gradient(135deg,#1a202c,#2d3748);color:#fff;padding:28px 32px;border-radius:8px 8px 0 0;display:flex;justify-content:space-between;align-items:flex-start}
+    .hd{background:linear-gradient(135deg,#1a202c,#2d3748);color:#fff;padding:28px 32px;border-radius:8px 8px 0 0;display:flex;justify-content:space-between;align-items:flex-start;gap:14px}
+    .biz-row{display:flex;align-items:center;gap:10px}
+    .biz-mark{width:34px;height:34px;border-radius:9px;flex-shrink:0;background:linear-gradient(135deg,#4f8ef7,#a78bfa);display:flex;align-items:center;justify-content:center}
     .biz{font-size:1.1rem;font-weight:800} .biz-tag{font-size:.8rem;color:#90cdf4;margin-top:2px}
+    .biz-meta{font-size:.72rem;color:#cbd5e0;margin-top:6px;line-height:1.5}
     .inv-no{font-size:.69rem;text-transform:uppercase;letter-spacing:.08em;color:#718096;text-align:right}
     .inv-val{font-size:1rem;font-weight:800;font-family:monospace;color:#90cdf4}
     .sect{padding:18px 32px;border-bottom:1px solid #e2e8f0}
@@ -395,8 +402,14 @@ const Invoices = (() => {
     @media print{@page{margin:8mm}}</style></head>
     <body><div class="wrap">
       <div class="hd">
-        <div><div class="biz">${H.esc(s.businessName||'FCMS Business')}</div>${s.freelancerName?`<div class="biz-tag">${H.esc(s.freelancerName)}</div>`:''}</div>
-        <div><div class="inv-no">Invoice</div><div class="inv-val">${H.esc(inv.invoiceNumber)}</div><div style="font-size:.78rem;color:#718096;text-align:right;margin-top:4px">Issue: ${H.fmtDate(inv.issueDate)}<br>Due: ${H.fmtDate(inv.dueDate)}</div></div>
+        <div>
+          <div class="biz-row">
+            <div class="biz-mark"><svg viewBox="0 0 32 32" width="18" height="18"><rect x="6" y="17" width="5" height="9" rx="1.6" fill="#fff" opacity="0.55"/><rect x="13.5" y="10.5" width="5" height="15.5" rx="1.6" fill="#fff" opacity="0.85"/><rect x="21" y="4" width="5" height="22" rx="1.6" fill="#fff"/></svg></div>
+            <div><div class="biz">${H.esc(s.businessName||'FCMS Business')}</div>${s.freelancerName?`<div class="biz-tag">${H.esc(s.freelancerName)}</div>`:''}</div>
+          </div>
+          <div class="biz-meta">${[s.address, s.contactNumber, s.email, s.tin?`TIN: ${s.tin}`:''].filter(Boolean).map(H.esc).join(' · ')}</div>
+        </div>
+        <div><div class="inv-no">Invoice</div><div class="inv-val">${H.esc(inv.invoiceNumber)}</div><div style="font-size:.78rem;color:#718096;text-align:right;margin-top:4px">Issue: ${H.fmtDate(inv.issueDate)}<br>Due: ${H.fmtDate(inv.dueDate)}${inv.poNumber?`<br>PO/Ref: ${H.esc(inv.poNumber)}`:''}</div></div>
       </div>
       <div class="sect"><div class="lbl">Billed To</div><div class="name">${H.esc(cl.name||'-')}</div>${cl.phone?`<div class="meta">${H.esc(cl.phone)}</div>`:''}${cl.email?`<div class="meta">${H.esc(cl.email)}</div>`:''}</div>
       <div class="sect"><div class="lbl">Description</div><div class="desc">${H.esc(inv.description)}</div></div>

@@ -1,7 +1,7 @@
 {
-  "name": "FCMS Pro - Commission Manager",
+  "name": "FCMS Pro - Client & Commission Manager",
   "short_name": "FCMS Pro",
-  "description": "Professional Freelance Commission Management System v4",
+  "description": "Client, project, and commission management for freelancers, agencies, and businesses",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#080a0f",
