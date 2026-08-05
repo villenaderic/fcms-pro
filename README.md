@@ -108,6 +108,7 @@ If there is no Unblock checkbox, Smart App Control is set to a strict mode. Open
 ## Changelog
 
 **Latest**
+- Restyled the whole app toward a cleaner, Google Workspace Admin Console look: light mode is now the default, the color palette was refined to match that clean gray-and-blue aesthetic, the active sidebar item is now a simple highlighted pill instead of a bar-and-tint combination, and breadcrumbs now use normal-case text with a chevron separator (for example "Clients › Profile") instead of uppercase text with a slash
 - Redesigned the login and setup screens as a split layout with a background image and a short feature highlight, replacing the plain centered card
 - Renamed every "CSV" export button to "Export to Excel" with a plain-language tooltip, and removed the arrow-only icon buttons on Backup, Analytics, and Receipts in favor of readable labels like "Download Full Backup" and "Save as Image"
 - Broadened the app's focus beyond freelance/creative work: added client type classification (individual, business, government, school, nonprofit, startup), and expanded the default service type list to include consulting, software development, admin work, training, and support

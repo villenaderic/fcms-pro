@@ -33,7 +33,7 @@ const App = (() => {
     const el = H.el('breadcrumb'); if (!el) return;
     el.innerHTML = parts.filter(Boolean).map((p, i, arr) => i === arr.length - 1
       ? `<span class="bc-current">${H.esc(p)}</span>`
-      : `<span class="bc-part">${H.esc(p)}</span><span class="bc-sep">/</span>`
+      : `<span class="bc-part">${H.esc(p)}</span><span class="bc-sep">›</span>`
     ).join('');
   }
   function setBreadcrumbTail(tail) {
@@ -596,7 +596,7 @@ const App = (() => {
   }
 
   function _applyTheme() {
-    const saved = localStorage.getItem('fcms-theme') || 'dark';
+    const saved = localStorage.getItem('fcms-theme') || 'light';
     document.documentElement.dataset.theme = saved;
     _updateThemeIcon();
   }
