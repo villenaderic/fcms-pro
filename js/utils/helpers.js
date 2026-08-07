@@ -25,6 +25,26 @@ const H = (() => {
     const c = avatarColor(name);
     return `<span class="avatar" style="--av-c:var(--${c});--av-bg:var(--${c}-d);width:${size}px;height:${size}px;min-width:${size}px;font-size:${Math.max(9,Math.round(size*0.4))}px">${esc(initials(name))}</span>`;
   };
+  const animateCount = (el, target, fmt = 'int', duration = 700) => {
+    if (!el) return;
+    const isPeso = fmt === 'peso';
+    const start = 0;
+    const t0 = performance.now();
+    const step = now => {
+      const p = Math.min(1, (now - t0) / duration);
+      const eased = 1 - Math.pow(1 - p, 3);
+      const val = start + (target - start) * eased;
+      el.textContent = isPeso ? peso(val) : Math.round(val).toLocaleString();
+      if (p < 1) requestAnimationFrame(step); else el.textContent = isPeso ? peso(target) : Math.round(target).toLocaleString();
+    };
+    requestAnimationFrame(step);
+  };
+  const animateCounters = (root = document) => {
+    root.querySelectorAll('[data-count]').forEach(el => {
+      const target = parseFloat(el.dataset.count) || 0;
+      animateCount(el, target, el.dataset.fmt || 'int');
+    });
+  };
   const toInput = iso => { if(!iso) return ''; const d=new Date(iso); return isNaN(d)?'':d.toISOString().split('T')[0]; };
   const addInterval = (iso, freq) => { if(!iso) return null; const d=new Date(iso); if(isNaN(d)) return null; if(freq==='weekly') d.setDate(d.getDate()+7); else if(freq==='biweekly') d.setDate(d.getDate()+14); else if(freq==='monthly') d.setMonth(d.getMonth()+1); else return null; return d.toISOString().split('T')[0]; };
 
@@ -89,6 +109,6 @@ const H = (() => {
   /* Format number without currency for inputs */
   const numFmt = v => { const n = parseFloat(v) || 0; return n.toLocaleString('en-PH', {minimumFractionDigits:2,maximumFractionDigits:2}); };
 
-  return { uid,rctCode,now,fmtDate,fmtDT,daysUntil,toInput,addInterval,avatar,initials,peso,numFmt,num,esc,trunc,hl,pwdStrength,hashPwd,verifyPwd,el,qs,qsa,debounce,validEmail,chip,toCSV,dlFile,dlJSON,readFile,paginate,renderPager,sortArr,search,sanitizeFile };
+  return { uid,rctCode,now,fmtDate,fmtDT,daysUntil,toInput,addInterval,avatar,initials,animateCount,animateCounters,peso,numFmt,num,esc,trunc,hl,pwdStrength,hashPwd,verifyPwd,el,qs,qsa,debounce,validEmail,chip,toCSV,dlFile,dlJSON,readFile,paginate,renderPager,sortArr,search,sanitizeFile };
 })();
 

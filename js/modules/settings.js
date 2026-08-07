@@ -96,9 +96,26 @@ const Settings = (() => {
               <div class="card-label">Theme</div>
               <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">
                 <div onclick="App.setTheme('dark')" style="width:120px;height:72px;border-radius:8px;border:2px solid ${document.documentElement.dataset.theme==='light'?'var(--border)':'var(--a)'};background:#080a0f;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.82rem;color:#eef2ff;font-weight:700">Dark</div>
-                <div onclick="App.setTheme('light')" style="width:120px;height:72px;border-radius:8px;border:2px solid ${document.documentElement.dataset.theme==='light'?'var(--a)':'var(--border)'};background:#f1f4fb;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.82rem;color:#111827;font-weight:700">Light</div>
+                <div onclick="App.setTheme('light')" style="width:120px;height:72px;border-radius:8px;border:2px solid ${document.documentElement.dataset.theme==='light'?'var(--a)':'var(--border)'};background:#f8f9fa;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.82rem;color:#202124;font-weight:700">Light</div>
               </div>
               <div class="note-block">Theme preference is saved automatically per browser.</div>
+            </div>
+            <div class="card">
+              <div class="card-label">Table Density</div>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+                <div onclick="App.setDensity('comfortable')" style="width:150px;height:72px;border-radius:8px;border:2px solid ${document.documentElement.dataset.density==='compact'?'var(--border)':'var(--a)'};background:var(--elev);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px">
+                  <div style="width:80px;height:5px;background:var(--t3);border-radius:2px"></div>
+                  <div style="width:80px;height:5px;background:var(--t3);border-radius:2px"></div>
+                  <span style="font-size:.72rem;color:var(--t2);margin-top:3px">Comfortable</span>
+                </div>
+                <div onclick="App.setDensity('compact')" style="width:150px;height:72px;border-radius:8px;border:2px solid ${document.documentElement.dataset.density==='compact'?'var(--a)':'var(--border)'};background:var(--elev);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px">
+                  <div style="width:80px;height:3px;background:var(--t3);border-radius:2px"></div>
+                  <div style="width:80px;height:3px;background:var(--t3);border-radius:2px"></div>
+                  <div style="width:80px;height:3px;background:var(--t3);border-radius:2px"></div>
+                  <span style="font-size:.72rem;color:var(--t2);margin-top:3px">Compact</span>
+                </div>
+              </div>
+              <div class="note-block">Compact mode tightens table row spacing so more rows fit on screen at once.</div>
             </div>
           </div>
 

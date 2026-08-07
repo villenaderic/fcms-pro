@@ -33,7 +33,7 @@ const App = (() => {
     const el = H.el('breadcrumb'); if (!el) return;
     el.innerHTML = parts.filter(Boolean).map((p, i, arr) => i === arr.length - 1
       ? `<span class="bc-current">${H.esc(p)}</span>`
-      : `<span class="bc-part">${H.esc(p)}</span><span class="bc-sep">›</span>`
+      : `<span class="bc-part bc-link" onclick="App.navigate('${_page}')">${H.esc(p)}</span><span class="bc-sep">›</span>`
     ).join('');
   }
   function setBreadcrumbTail(tail) {
@@ -59,6 +59,8 @@ const App = (() => {
     await DB.open();
     Modal.init();
     _applyTheme();
+    _applyDensity();
+    _applySidebarCollapse();
 
     const ready = await Auth.isSetupDone();
     if (!ready) { _showSetup(); return; }
@@ -166,6 +168,8 @@ const App = (() => {
     const nm   = H.el('user-name'); if (nm) nm.textContent = user;
 
     _applyTheme();
+    _applyDensity();
+    _applySidebarCollapse();
     _bindNav();
     _bindTopbar();
     _bindSearch();
@@ -601,6 +605,33 @@ const App = (() => {
     _updateThemeIcon();
   }
 
+  function _applyDensity() {
+    const saved = localStorage.getItem('fcms-density') || 'comfortable';
+    document.documentElement.dataset.density = saved;
+  }
+
+  function _applySidebarCollapse() {
+    const saved = localStorage.getItem('fcms-sidebar') || 'expanded';
+    document.documentElement.dataset.sidebar = saved;
+    const btn = H.el('collapse-btn');
+    if (btn) btn.title = saved === 'collapsed' ? 'Expand sidebar' : 'Collapse sidebar';
+  }
+
+  function toggleSidebarCollapse() {
+    const next = document.documentElement.dataset.sidebar === 'collapsed' ? 'expanded' : 'collapsed';
+    document.documentElement.dataset.sidebar = next;
+    localStorage.setItem('fcms-sidebar', next);
+    const btn = H.el('collapse-btn');
+    if (btn) btn.title = next === 'collapsed' ? 'Expand sidebar' : 'Collapse sidebar';
+  }
+
+  function setDensity(d) {
+    document.documentElement.dataset.density = d;
+    localStorage.setItem('fcms-density', d);
+    Notify.ok(d === 'compact' ? 'Compact mode enabled.' : 'Comfortable mode enabled.');
+    if (_page === 'settings') Settings.render();
+  }
+
   function _updateThemeIcon() {
     const btn = H.el('theme-btn'); if (!btn) return;
     const dark = document.documentElement.dataset.theme !== 'light';
@@ -647,6 +678,7 @@ const App = (() => {
     document.documentElement.dataset.theme = t;
     localStorage.setItem('fcms-theme', t);
     _updateThemeIcon();
+    if (_page === 'settings') Settings.render();
   }
 
   return {
@@ -654,8 +686,10 @@ const App = (() => {
     doChangePass,
     toggleTheme, togglePass,
     openSidebar, closeSidebar, toggleSidebar,
+    toggleSidebarCollapse,
     openShortcuts, closeShortcuts,
     setTheme,
+    setDensity,
     setBreadcrumb, setBreadcrumbTail,
     refreshBadge: _refreshBadge,
   };

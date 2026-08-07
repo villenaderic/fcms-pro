@@ -1,7 +1,6 @@
 'use strict';
 const Notify = (() => {
   const ICO = { ok: '✔', err: '✖', wrn: '⚠', inf: 'ℹ' };
-  const TTL = { ok: 'Success', err: 'Error', wrn: 'Warning', inf: 'Info' };
   const DUR = { ok: 3500, err: 5500, wrn: 4000, inf: 3500 };
 
   function _sanitize(s) {
@@ -12,9 +11,9 @@ const Notify = (() => {
   function show(type, msg, ms) {
     const c = H.el('toasts'); if (!c) return;
     // Deduplicate: don't stack same message
-    const existing = c.querySelectorAll('.toast-title');
+    const existing = c.querySelectorAll('.toast-msg');
     for (const el of existing) {
-      if (el.nextElementSibling?.textContent === msg) return;
+      if (el.textContent === msg) return;
     }
     const d = document.createElement('div');
     d.className = `toast t-${type}`;
@@ -22,7 +21,6 @@ const Notify = (() => {
     d.innerHTML = `
       <span class="toast-ico" aria-hidden="true">${ICO[type] || 'ℹ'}</span>
       <div class="toast-body">
-        <div class="toast-title">${TTL[type] || ''}</div>
         <div class="toast-msg">${_sanitize(msg)}</div>
       </div>
       <button class="toast-close" aria-label="Dismiss notification">✕</button>`;
@@ -34,7 +32,7 @@ const Notify = (() => {
 
   function _dismiss(d) {
     if (!d?.parentNode) return;
-    d.style.cssText = 'opacity:0;transform:translateX(12px);transition:all .18s ease;pointer-events:none';
+    d.style.cssText = 'opacity:0;transform:translateY(10px);transition:all .18s ease;pointer-events:none';
     setTimeout(() => d.parentNode?.removeChild(d), 200);
   }
 

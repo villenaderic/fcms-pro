@@ -60,49 +60,49 @@ const Dashboard = (() => {
         <div class="kpi" style="--kpi-c:var(--a);--kpi-bg:var(--a-d)" onclick="App.navigate('clients')" style="cursor:pointer">
           <div class="kpi-icon-box"><svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></div>
           <div class="kpi-lbl">Clients</div>
-          <div class="kpi-val">${clients.length}</div>
+          <div class="kpi-val" data-count="${clients.length}" data-fmt="int">0</div>
           <div class="kpi-foot">${active} active work${active!==1?'s':''}</div>
         </div>
         <div class="kpi" style="--kpi-c:var(--green);--kpi-bg:var(--green-d)" onclick="App.navigate('payments')" style="cursor:pointer">
           <div class="kpi-icon-box"><svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg></div>
           <div class="kpi-lbl">Total Income</div>
-          <div class="kpi-val sm">${H.peso(totalInc)}</div>
+          <div class="kpi-val sm" data-count="${totalInc}" data-fmt="peso">${H.peso(0)}</div>
           <div class="kpi-foot"><span class="kpi-delta ${monthly.delta>=0?'up':'dn'}">${monthly.delta>=0?'▲':'▼'} ${H.peso(Math.abs(monthly.delta))}</span> vs last month</div>
         </div>
         <div class="kpi" style="--kpi-c:var(--amber);--kpi-bg:var(--amber-d)" onclick="App.navigate('commissions')" style="cursor:pointer">
           <div class="kpi-icon-box"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg></div>
           <div class="kpi-lbl">Pending Balance</div>
-          <div class="kpi-val sm" style="color:var(--amber)">${H.peso(pending)}</div>
+          <div class="kpi-val sm" style="color:var(--amber)" data-count="${pending}" data-fmt="peso">${H.peso(0)}</div>
           <div class="kpi-foot">${commissions.filter(c=>c.remaining>0).length} unpaid</div>
         </div>
         <div class="kpi" style="--kpi-c:var(--purple);--kpi-bg:var(--purple-d)">
           <div class="kpi-icon-box"><svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg></div>
           <div class="kpi-lbl">This Month</div>
-          <div class="kpi-val sm">${H.peso(thisMonInc)}</div>
+          <div class="kpi-val sm" data-count="${thisMonInc}" data-fmt="peso">${H.peso(0)}</div>
           <div class="kpi-foot">${thisMonPay.length} payment${thisMonPay.length!==1?'s':''}</div>
         </div>
         <div class="kpi" style="--kpi-c:${netProfit>=0?'var(--green)':'var(--red)'};--kpi-bg:${netProfit>=0?'var(--green-d)':'var(--red-d)'}">
           <div class="kpi-icon-box"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg></div>
           <div class="kpi-lbl">Net Profit</div>
-          <div class="kpi-val sm" style="color:${netProfit>=0?'var(--green)':'var(--red)'}">${H.peso(netProfit)}</div>
+          <div class="kpi-val sm" style="color:${netProfit>=0?'var(--green)':'var(--red)'}" data-count="${netProfit}" data-fmt="peso">${H.peso(0)}</div>
           <div class="kpi-foot">${convRate}% completion rate</div>
         </div>
         <div class="kpi" style="--kpi-c:var(--rose);--kpi-bg:var(--rose-d)" onclick="App.navigate('expenses')" style="cursor:pointer">
           <div class="kpi-icon-box"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg></div>
           <div class="kpi-lbl">Total Expenses</div>
-          <div class="kpi-val sm" style="color:var(--rose)">${H.peso(totalExp)}</div>
+          <div class="kpi-val sm" style="color:var(--rose)" data-count="${totalExp}" data-fmt="peso">${H.peso(0)}</div>
           <div class="kpi-foot">${expenses.length} record${expenses.length!==1?'s':''}</div>
         </div>
         <div class="kpi" style="--kpi-c:var(--cyan);--kpi-bg:var(--cyan-d)" onclick="App.navigate('commissions')" style="cursor:pointer">
           <div class="kpi-icon-box"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg></div>
           <div class="kpi-lbl">Completed</div>
-          <div class="kpi-val">${completed}</div>
+          <div class="kpi-val" data-count="${completed}" data-fmt="int">0</div>
           <div class="kpi-foot">of ${commissions.length} total</div>
         </div>
         <div class="kpi" style="--kpi-c:var(--red);--kpi-bg:var(--red-d)">
           <div class="kpi-icon-box"><svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg></div>
           <div class="kpi-lbl">Overdue</div>
-          <div class="kpi-val" style="color:${overdue.length>0?'var(--red)':'var(--green)'}">${overdue.length}</div>
+          <div class="kpi-val" style="color:${overdue.length>0?'var(--red)':'var(--green)'}" data-count="${overdue.length}" data-fmt="int">0</div>
           <div class="kpi-foot">${overdue.length>0?'Needs attention':'All on track ✔'}</div>
         </div>
       </div>
@@ -160,6 +160,7 @@ const Dashboard = (() => {
       _drawDonut(statusData);
       _renderDeadlines(deadlines, clMap);
       _renderActivity(recentLogs);
+      H.animateCounters();
     }, 30);
   }
 
