@@ -13,9 +13,10 @@ Progress: sticky table headers, compact/comfortable density mode, clickable
 breadcrumb segments, animated KPI counters, snackbar-style toast notifications,
 a collapsible icon-only sidebar, a theme toggle inside the profile dropdown,
 skeleton loading placeholders on page navigation, a full tooltip pass on
-icon-only buttons, consistent status pill colors across the whole app, and a
-visual status timeline stepper on the commission edit form are done.
-Everything else below is still open.
+icon-only buttons, consistent status pill colors across the whole app, a
+visual status timeline stepper on the commission edit form, notifications
+grouped by urgency (Overdue, Today, This Week, Later), and a custom accent
+color picker in Settings are done. Everything else below is still open.
 
 - **[S] Collapsible section cards** - the Client Profile and Settings pages would
   feel more like the Google reference if sections (Storage, Security, Groups style
@@ -36,10 +37,6 @@ Everything else below is still open.
   Duplicate) on right-click, in addition to the existing action buttons.
 - **[M] Dashboard widget customization** - let the user choose which KPI cards
   or panels show on their dashboard and in what order.
-- **[S] Custom accent color picker** - let the user pick their own accent color
-  in Settings instead of the fixed blue, similar to "Material You" theming.
-- **[S] Grouped notification bell** - group notifications by day ("Today",
-  "This week") instead of one flat list once there are many at once.
 - **[S] Print preview before printing** - a lightweight preview modal for
   invoices and receipts before sending them to the browser's print dialog.
 

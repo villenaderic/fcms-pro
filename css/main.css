@@ -358,6 +358,10 @@ img { max-width: 100%; display: block; }
   font-size:.82rem; font-weight:700;
 }
 .np-head-count { font-size:.74rem; color:var(--t3); font-weight:400; }
+.np-grp-lbl {
+  padding:8px 14px 4px; font-size:.67rem; font-weight:800;
+  text-transform:uppercase; letter-spacing:.06em; color:var(--t3);
+}
 .np-item {
   display:flex; align-items:flex-start; gap:9px;
   padding:9px 15px; border-bottom:1px solid var(--border2);

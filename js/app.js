@@ -61,6 +61,7 @@ const App = (() => {
     _applyTheme();
     _applyDensity();
     _applySidebarCollapse();
+    _applySavedAccent();
 
     const ready = await Auth.isSetupDone();
     if (!ready) { _showSetup(); return; }
@@ -170,6 +171,7 @@ const App = (() => {
     _applyTheme();
     _applyDensity();
     _applySidebarCollapse();
+    _applySavedAccent();
     _bindNav();
     _bindTopbar();
     _bindSearch();
@@ -525,6 +527,7 @@ const App = (() => {
     const [comms, clients, invoices] = await Promise.all([DB.getAll('commissions'), DB.getAll('clients'), DB.getAll('invoices')]);
     const clMap = {}; clients.forEach(c => clMap[c.id] = c);
     const notifs = [];
+    const groupFor = d => d < 0 ? 'Overdue' : d === 0 ? 'Today' : d <= 7 ? 'This Week' : 'Later';
 
     comms.forEach(c => {
       if (['Delivered', 'Cancelled'].includes(c.status)) return;
@@ -532,19 +535,19 @@ const App = (() => {
       if (d === null) return;
       const cl = clMap[c.clientId];
       if (d < 0)
-        notifs.push({ t:'urg', text:`OVERDUE: ${H.trunc(c.title,28)}`, sub:`${Math.abs(d)}d overdue · ${H.esc(cl?.name||'?')}`, page:'commissions' });
+        notifs.push({ t:'urg', grp:groupFor(d), text:`OVERDUE: ${H.trunc(c.title,28)}`, sub:`${Math.abs(d)}d overdue · ${H.esc(cl?.name||'?')}`, page:'commissions' });
       else if (d === 0)
-        notifs.push({ t:'urg', text:`Due TODAY: ${H.trunc(c.title,28)}`, sub:H.esc(cl?.name||'?'), page:'commissions' });
+        notifs.push({ t:'urg', grp:groupFor(d), text:`Due TODAY: ${H.trunc(c.title,28)}`, sub:H.esc(cl?.name||'?'), page:'commissions' });
       else if (d <= 2)
-        notifs.push({ t:'urg', text:`Due in ${d}d: ${H.trunc(c.title,26)}`, sub:H.fmtDate(c.deadline), page:'commissions' });
+        notifs.push({ t:'urg', grp:groupFor(d), text:`Due in ${d}d: ${H.trunc(c.title,26)}`, sub:H.fmtDate(c.deadline), page:'commissions' });
       else if (d <= 7)
-        notifs.push({ t:'warn', text:`Due in ${d} days: ${H.trunc(c.title,24)}`, sub:H.fmtDate(c.deadline), page:'commissions' });
+        notifs.push({ t:'warn', grp:groupFor(d), text:`Due in ${d} days: ${H.trunc(c.title,24)}`, sub:H.fmtDate(c.deadline), page:'commissions' });
     });
 
     // Unpaid balance alerts
     const highBal = comms.filter(c => c.remaining > 5000 && !['Delivered','Cancelled'].includes(c.status));
     if (highBal.length > 0)
-      notifs.push({ t:'info', text:`${highBal.length} commission${highBal.length>1?'s':''} with pending balance`, sub:'Click to review payments', page:'payments' });
+      notifs.push({ t:'info', grp:'Other', text:`${highBal.length} commission${highBal.length>1?'s':''} with pending balance`, sub:'Click to review payments', page:'payments' });
 
     // Overdue invoice alerts
     (invoices || []).forEach(inv => {
@@ -552,23 +555,31 @@ const App = (() => {
       const d = H.daysUntil(inv.dueDate);
       if (d === null || d >= 0) return;
       const cl = clMap[inv.clientId];
-      notifs.push({ t:'urg', text:`Invoice overdue: ${H.esc(inv.invoiceNumber||'')}`, sub:`${Math.abs(d)}d overdue · ${H.esc(cl?.name||'?')}`, page:'invoices' });
+      notifs.push({ t:'urg', grp:'Overdue', text:`Invoice overdue: ${H.esc(inv.invoiceNumber||'')}`, sub:`${Math.abs(d)}d overdue · ${H.esc(cl?.name||'?')}`, page:'invoices' });
     });
 
     if (!notifs.length) {
       panel.innerHTML = `<div class="np-head"><span>Notifications</span></div><div class="np-empty">All caught up! No alerts.</div>`;
       return;
     }
+
+    const order = ['Overdue', 'Today', 'This Week', 'Later', 'Other'];
+    const groups = {};
+    notifs.forEach(n => { (groups[n.grp] = groups[n.grp] || []).push(n); });
+
     panel.innerHTML = `
       <div class="np-head">
         <span>Notifications</span>
         <span class="np-head-count">${notifs.length} alert${notifs.length>1?'s':''}</span>
       </div>
-      ${notifs.map(n => `
-      <div class="np-item" onclick="App.navigate('${n.page}')">
-        <div class="np-dot ${n.t}"></div>
-        <div><div class="np-msg">${H.esc(n.text)}</div><div class="np-time">${H.esc(n.sub)}</div></div>
-      </div>`).join('')}`;
+      ${order.filter(g => groups[g]?.length).map(g => `
+        <div class="np-grp-lbl">${g}</div>
+        ${groups[g].map(n => `
+        <div class="np-item" onclick="App.navigate('${n.page}')">
+          <div class="np-dot ${n.t}"></div>
+          <div><div class="np-msg">${H.esc(n.text)}</div><div class="np-time">${H.esc(n.sub)}</div></div>
+        </div>`).join('')}
+      `).join('')}`;
   }
 
   async function _refreshBadge() {
@@ -618,6 +629,43 @@ const App = (() => {
     const saved = localStorage.getItem('fcms-theme') || 'light';
     document.documentElement.dataset.theme = saved;
     _updateThemeIcon();
+  }
+
+  function _hexToRgb(hex) {
+    hex = (hex || '').replace('#', '');
+    if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+    const n = parseInt(hex, 16) || 0;
+    return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+  }
+  function _shade(hex, pct) {
+    const { r, g, b } = _hexToRgb(hex);
+    const t = pct < 0 ? 0 : 255;
+    const p = Math.abs(pct);
+    const f = v => Math.round((t - v) * p + v).toString(16).padStart(2, '0');
+    return `#${f(r)}${f(g)}${f(b)}`;
+  }
+  function _applyAccentColor(hex) {
+    const { r, g, b } = _hexToRgb(hex);
+    const root = document.documentElement.style;
+    root.setProperty('--a', hex);
+    root.setProperty('--a-h', _shade(hex, -0.15));
+    root.setProperty('--a-d', `rgba(${r},${g},${b},0.1)`);
+    root.setProperty('--a-d2', `rgba(${r},${g},${b},0.05)`);
+  }
+  function setAccentColor(hex) {
+    _applyAccentColor(hex);
+    localStorage.setItem('fcms-accent', hex);
+    if (_page === 'settings') Settings.render();
+  }
+  function resetAccentColor() {
+    const root = document.documentElement.style;
+    ['--a', '--a-h', '--a-d', '--a-d2'].forEach(p => root.removeProperty(p));
+    localStorage.removeItem('fcms-accent');
+    if (_page === 'settings') Settings.render();
+  }
+  function _applySavedAccent() {
+    const saved = localStorage.getItem('fcms-accent');
+    if (saved) _applyAccentColor(saved);
   }
 
   function _applyDensity() {
@@ -707,6 +755,7 @@ const App = (() => {
     openShortcuts, closeShortcuts,
     setTheme,
     setDensity,
+    setAccentColor, resetAccentColor,
     setBreadcrumb, setBreadcrumbTail,
     refreshBadge: _refreshBadge,
   };

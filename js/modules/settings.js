@@ -117,6 +117,19 @@ const Settings = (() => {
               </div>
               <div class="note-block">Compact mode tightens table row spacing so more rows fit on screen at once.</div>
             </div>
+            <div class="card">
+              <div class="card-label">Accent Color</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px" id="accent-swatches">
+                ${[['#1a73e8','Blue'],['#16a34a','Green'],['#7c3aed','Purple'],['#dc2626','Red'],['#0d9488','Teal'],['#d97706','Amber']].map(([hex,name])=>`
+                  <div onclick="App.setAccentColor('${hex}')" title="${name}" style="width:32px;height:32px;border-radius:50%;background:${hex};cursor:pointer;border:2px solid ${localStorage.getItem('fcms-accent')===hex?'var(--t1)':'transparent'};box-shadow:0 0 0 1px var(--border)"></div>
+                `).join('')}
+                <label style="width:32px;height:32px;border-radius:50%;cursor:pointer;border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:.9rem;color:var(--t3);position:relative">
+                  🎨<input type="color" id="accent-custom" value="${localStorage.getItem('fcms-accent')||'#1a73e8'}" onchange="App.setAccentColor(this.value)" style="position:absolute;inset:0;opacity:0;cursor:pointer"/>
+                </label>
+              </div>
+              <button class="btn btn-ghost btn-sm" onclick="App.resetAccentColor()">Reset to Default</button>
+              <div class="note-block" style="margin-top:10px">Pick a preset or use the custom swatch to choose any color. Applies instantly across the whole app.</div>
+            </div>
           </div>
 
           <!-- Services -->

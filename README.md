@@ -108,6 +108,10 @@ If there is no Unblock checkbox, Smart App Control is set to a strict mode. Open
 ## Changelog
 
 **Latest**
+- Added a custom accent color picker to Settings → Appearance, with six presets
+  plus a full custom color option, applied instantly across the whole app
+- Grouped the notification bell into Overdue, Today, This Week, and Later
+  sections instead of one flat list
 - Fixed two real inconsistencies found while standardizing status colors: quote
   statuses "Accepted", "Declined", and "Expired" had no color mapping and all
   rendered as the same blue chip, and the commission status pills used
