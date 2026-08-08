@@ -108,6 +108,9 @@ If there is no Unblock checkbox, Smart App Control is set to a strict mode. Open
 ## Changelog
 
 **Latest**
+- Added a theme toggle inside the profile dropdown menu, skeleton loading
+  placeholders while a page's data loads, and finished a full tooltip pass on
+  every remaining icon-only button in the app
 - Started implementing the roadmap: sticky table headers, a compact/comfortable
   density mode (Settings → Appearance), clickable breadcrumb segments, animated
   count-up numbers on the dashboard KPI cards, redesigned toast notifications as

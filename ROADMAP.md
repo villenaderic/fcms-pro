@@ -11,8 +11,9 @@ per session: **S** (small, an hour or two of work), **M** (medium, a solid sessi
 
 Progress: sticky table headers, compact/comfortable density mode, clickable
 breadcrumb segments, animated KPI counters, snackbar-style toast notifications,
-and a collapsible icon-only sidebar are done. Everything else below is still
-open.
+a collapsible icon-only sidebar, a theme toggle inside the profile dropdown,
+skeleton loading placeholders on page navigation, and a full tooltip pass on
+icon-only buttons are done. Everything else below is still open.
 
 - **[S] Collapsible section cards** - the Client Profile and Settings pages would
   feel more like the Google reference if sections (Storage, Security, Groups style
@@ -23,14 +24,6 @@ open.
   keeps table rows clean until you interact with them.
 - **[M] Top bar app grid** - a waffle-style icon (▦) in the top bar that opens a
   quick-jump grid to any page, similar to Google's app switcher.
-- **[S] Profile menu dropdown** - clicking the avatar in the top right opens a
-  small dropdown (Settings, Toggle theme, Sign out) instead of separate icon
-  buttons scattered in the top bar.
-- **[S] Skeleton loading states** - brief gray placeholder blocks while a page's
-  data loads, instead of a blank flash (mostly cosmetic, IndexedDB is fast, but
-  it reads as more polished).
-- **[S] Tooltip pass** - add hover tooltips to every icon-only button app-wide,
-  not just the export buttons we already did.
 - **[M] Split settings into a two-pane layout** - a narrower left-hand list of
   setting categories with the active one's content on the right, closer to how
   Google Admin structures its own settings pages.

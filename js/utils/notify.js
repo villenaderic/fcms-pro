@@ -23,7 +23,7 @@ const Notify = (() => {
       <div class="toast-body">
         <div class="toast-msg">${_sanitize(msg)}</div>
       </div>
-      <button class="toast-close" aria-label="Dismiss notification">✕</button>`;
+      <button class="toast-close" aria-label="Dismiss notification" title="Dismiss">✕</button>`;
     c.appendChild(d);
     d.querySelector('.toast-close').onclick = () => _dismiss(d);
     const timer = setTimeout(() => _dismiss(d), ms || DUR[type] || 4000);
