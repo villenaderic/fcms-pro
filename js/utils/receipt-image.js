@@ -463,8 +463,16 @@ const ReceiptImg = (() => {
     if (!win) { Notify.err('Popup blocked. Allow popups to print.'); return; }
     win.document.write(`<!DOCTYPE html><html><head><title>Official Receipt</title>
 <style>*{margin:0;padding:0}body{background:#fff}img{max-width:100%;display:block;margin:0 auto}
+.prev-bar{position:sticky;top:0;z-index:10;background:#1a202c;padding:10px 16px;display:flex;justify-content:center;gap:10px}
+.prev-btn{padding:8px 18px;border-radius:6px;border:none;font-size:.83rem;font-weight:700;cursor:pointer;font-family:Inter,Arial,sans-serif}
+.prev-btn.pr{background:#4f8ef7;color:#fff} .prev-btn.cl{background:#2d3748;color:#e2e8f0}
+@media print{.prev-bar{display:none}}
 @media print{@page{margin:10mm}}</style></head><body>
-<img src="${url}" onload="window.print();setTimeout(()=>window.close(),500)"/></body></html>`);
+<div class="prev-bar">
+  <button class="prev-btn pr" onclick="window.print()">🖨 Print</button>
+  <button class="prev-btn cl" onclick="window.close()">✕ Close Preview</button>
+</div>
+<img src="${url}"/></body></html>`);
     win.document.close();
   }
 

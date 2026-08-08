@@ -108,6 +108,11 @@ If there is no Unblock checkbox, Smart App Control is set to a strict mode. Open
 ## Changelog
 
 **Latest**
+- Fixed a real bug in Invoices, Quotes, and Receipts: printing used to open a
+  window that immediately triggered the print dialog and then force-closed
+  itself after half a second, whether or not you actually printed. There was
+  no way to review the document first. Print now opens a real preview window
+  with Print and Close buttons, and stays open until you're done with it
 - Added a custom accent color picker to Settings → Appearance, with six presets
   plus a full custom color option, applied instantly across the whole app
 - Grouped the notification bell into Overdue, Today, This Week, and Later

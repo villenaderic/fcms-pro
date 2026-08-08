@@ -15,8 +15,9 @@ a collapsible icon-only sidebar, a theme toggle inside the profile dropdown,
 skeleton loading placeholders on page navigation, a full tooltip pass on
 icon-only buttons, consistent status pill colors across the whole app, a
 visual status timeline stepper on the commission edit form, notifications
-grouped by urgency (Overdue, Today, This Week, Later), and a custom accent
-color picker in Settings are done. Everything else below is still open.
+grouped by urgency (Overdue, Today, This Week, Later), a custom accent color
+picker in Settings, and a real print preview for invoices, quotes, and
+receipts are done. Everything else below is still open.
 
 - **[S] Collapsible section cards** - the Client Profile and Settings pages would
   feel more like the Google reference if sections (Storage, Security, Groups style
@@ -37,8 +38,6 @@ color picker in Settings are done. Everything else below is still open.
   Duplicate) on right-click, in addition to the existing action buttons.
 - **[M] Dashboard widget customization** - let the user choose which KPI cards
   or panels show on their dashboard and in what order.
-- **[S] Print preview before printing** - a lightweight preview modal for
-  invoices and receipts before sending them to the browser's print dialog.
 
 ## 2. New features
 

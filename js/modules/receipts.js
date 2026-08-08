@@ -120,7 +120,7 @@ const Receipts = (() => {
         <button class="btn btn-ghost btn-xs" onclick="Receipts.preview('${r.id}')">Preview</button>
         <button class="btn btn-primary btn-xs" onclick="Receipts.saveImg('${r.id}')">Save as Image</button>
         <button class="btn btn-ghost btn-xs" onclick="Receipts.savePDF('${r.id}')">Save as PDF</button>
-        <button class="btn btn-ghost btn-xs" onclick="Receipts.printImg('${r.id}')" title="Print this receipt">🖨</button>
+        <button class="btn btn-ghost btn-xs" onclick="Receipts.printImg('${r.id}')" title="Preview and print this receipt">🖨</button>
       </td>
     </tr>`).join('');
     document.querySelectorAll('.rc-cb').forEach(cb=>{

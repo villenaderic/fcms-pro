@@ -149,7 +149,7 @@ const Invoices = (() => {
           <button class="btn btn-ghost btn-xs" onclick="Invoices.viewDetail('${inv.id}')">View</button>
           <button class="btn btn-ghost btn-xs" onclick="Invoices.openForm('${inv.id}')">Edit</button>
           ${inv.status !== 'Paid' ? `<button class="btn btn-success btn-xs" onclick="Invoices.markPaid('${inv.id}')">Mark Paid</button>` : ''}
-          <button class="btn btn-teal btn-xs" onclick="Invoices.printInvoice('${inv.id}')">Print</button>
+          <button class="btn btn-teal btn-xs" onclick="Invoices.printInvoice('${inv.id}')" title="Preview and print this invoice">Print Preview</button>
           <button class="btn btn-danger btn-xs" onclick="Invoices.delOne('${inv.id}')">Delete</button>
         </td>
       </tr>`;
@@ -371,7 +371,7 @@ const Invoices = (() => {
         <button class="btn btn-ghost" onclick="Modal.close()">Close</button>
         <button class="btn btn-ghost" onclick="Invoices.openForm('${id}');Modal.close()">Edit</button>
         ${inv.status !== 'Paid' ? `<button class="btn btn-success" onclick="Invoices.markPaid('${id}');Modal.close()">Mark Paid</button>` : ''}
-        <button class="btn btn-primary" onclick="Invoices.printInvoice('${id}')">Print / PDF</button>`
+        <button class="btn btn-primary" onclick="Invoices.printInvoice('${id}')">Print Preview</button>`
     });
   }
 
@@ -399,8 +399,17 @@ const Invoices = (() => {
     .tot-inner{min-width:260px} .tot-row{display:flex;justify-content:space-between;padding:4px 0;font-size:.85rem}
     .tot-final{display:flex;justify-content:space-between;padding:10px 0;border-top:2px solid #1a202c;margin-top:6px;font-size:.95rem;font-weight:800}
     .mono{font-family:monospace} .footer{background:#f8fafc;padding:12px 32px;font-size:.79rem;color:#718096;line-height:1.6;border-radius:0 0 8px 8px}
-    @media print{@page{margin:8mm}}</style></head>
-    <body><div class="wrap">
+    .prev-bar{position:sticky;top:0;z-index:10;background:#1a202c;padding:10px 16px;display:flex;justify-content:center;gap:10px}
+    .prev-btn{padding:8px 18px;border-radius:6px;border:none;font-size:.83rem;font-weight:700;cursor:pointer;font-family:Inter,Arial,sans-serif}
+    .prev-btn.pr{background:#4f8ef7;color:#fff} .prev-btn.cl{background:#2d3748;color:#e2e8f0}
+    @media print{.prev-bar{display:none}}
+    @page{margin:8mm}</style></head>
+    <body>
+      <div class="prev-bar">
+        <button class="prev-btn pr" onclick="window.print()">🖨 Print</button>
+        <button class="prev-btn cl" onclick="window.close()">✕ Close Preview</button>
+      </div>
+      <div class="wrap">
       <div class="hd">
         <div>
           <div class="biz-row">
@@ -420,9 +429,9 @@ const Invoices = (() => {
         <div class="tot-final"><span>Total Due</span><span class="mono">₱${Number(inv.total||0).toFixed(2)}</span></div>
       </div></div>
       ${inv.terms||inv.notes?`<div class="footer">${inv.terms?`<strong>Terms:</strong> ${H.esc(inv.terms)}<br>`:''}${inv.notes?H.esc(inv.notes):''}</div>`:''}
-    </div><script>window.onload=()=>{window.print();setTimeout(()=>window.close(),600)}<\/script></body></html>`);
+    </div></body></html>`);
     win.document.close();
-    await Logs.add('update', `Printed invoice: ${inv.invoiceNumber}`);
+    await Logs.add('update', `Previewed invoice: ${inv.invoiceNumber}`);
   }
 
   async function delOne(id) {
