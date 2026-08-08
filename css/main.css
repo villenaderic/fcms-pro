@@ -624,9 +624,12 @@ tbody tr:hover td { background:var(--hover); }
 .ch-cancelled { background:var(--red-d);    color:var(--red);    }
 .ch-paid      { background:var(--green-d);  color:var(--green);  }
 .ch-partial   { background:var(--amber-d);  color:var(--amber);  }
-.ch-draft     { background:var(--a-d);      color:var(--a);      }
+.ch-draft     { background:var(--hover);    color:var(--t2);     }
 .ch-sent      { background:var(--purple-d); color:var(--purple); }
 .ch-overdue   { background:var(--red-d);    color:var(--red);    }
+.ch-accepted  { background:var(--green-d);  color:var(--green);  }
+.ch-declined  { background:var(--red-d);    color:var(--red);    }
+.ch-expired   { background:var(--hover);    color:var(--t3);     }
 .ch-blue      { background:var(--a-d);      color:var(--a);      }
 .ch-teal      { background:var(--teal-d);   color:var(--teal);   }
 
@@ -639,12 +642,12 @@ tbody tr:hover td { background:var(--hover); }
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='5' viewBox='0 0 9 5'%3E%3Cpath d='M0 0l4.5 5L9 0z' fill='%23888'/%3E%3C/svg%3E");
   background-repeat:no-repeat; background-position:right 6px center;
 }
-.chip-sel-pending   { background-color:rgba(251,191,36,.15); color:#fbbf24; }
-.chip-sel-in-progress { background-color:rgba(79,142,247,.15); color:#4f8ef7; }
-.chip-sel-revision  { background-color:rgba(167,139,250,.15); color:#a78bfa; }
-.chip-sel-completed { background-color:rgba(52,211,153,.15); color:#34d399; }
-.chip-sel-delivered { background-color:rgba(34,211,238,.15); color:#22d3ee; }
-.chip-sel-cancelled { background-color:rgba(248,113,113,.15); color:#f87171; }
+.chip-sel-pending      { background-color:var(--amber-d);  color:var(--amber);  }
+.chip-sel-in-progress  { background-color:var(--a-d);      color:var(--a);      }
+.chip-sel-revision     { background-color:var(--purple-d); color:var(--purple); }
+.chip-sel-completed    { background-color:var(--green-d);  color:var(--green);  }
+.chip-sel-delivered    { background-color:var(--cyan-d);   color:var(--cyan);   }
+.chip-sel-cancelled    { background-color:var(--red-d);    color:var(--red);    }
 
 /* ── MODAL ──────────────────────────────────────────────────── */
 .modal-bg {
@@ -1164,6 +1167,20 @@ kbd {
 
 /* ── SKELETON LOADING STATE ────────────────────────────────── */
 .bulk-count { font-size: .83rem; font-weight: 700; color: var(--a); }
+.status-stepper { display:flex; align-items:flex-start; margin-bottom:16px; padding:12px 4px; }.step-item { display:flex; flex-direction:column; align-items:center; gap:5px; flex-shrink:0; width:64px; }
+.step-dot {
+  width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-size:.68rem; font-weight:800; background:var(--hover); color:var(--t3); border:2px solid var(--border);
+  transition: all var(--t);
+}
+.step-item.done .step-dot    { background:var(--green-d); color:var(--green); border-color:var(--green); }
+.step-item.current .step-dot { background:var(--a); color:#fff; border-color:var(--a); box-shadow:0 0 0 3px var(--a-d); }
+.step-lbl { font-size:.63rem; color:var(--t3); text-align:center; line-height:1.2; }
+.step-item.current .step-lbl { color:var(--a); font-weight:700; }
+.step-item.done .step-lbl { color:var(--t2); }
+.step-line { flex:1; height:2px; background:var(--border); margin-top:11px; min-width:8px; }
+.step-line.done { background:var(--green); }
+@media (max-width: 480px) { .step-lbl { display:none; } .step-item { width:auto; } }
 .skel {
   background: linear-gradient(90deg, var(--elev) 25%, var(--hover) 50%, var(--elev) 75%);
   background-size: 200% 100%;

@@ -211,6 +211,32 @@ const Commissions = (() => {
   function clearSel(){_sel.clear();renderTable(_cMap);updateBulk();}
   function clearFilter(){_filterClientId=null;render();}
 
+  const FLOW_STEPS = ['Pending','In Progress','Revision','Completed','Delivered'];
+
+  function _statusStepperHTML(status) {
+    if (status === 'Cancelled') {
+      return `<div class="status-stepper">
+        <span class="chip ch-cancelled" style="font-size:.78rem;padding:5px 12px">✕ Cancelled</span>
+      </div>`;
+    }
+    const idx = FLOW_STEPS.indexOf(status);
+    return `<div class="status-stepper" id="cmf-stepper">
+      ${FLOW_STEPS.map((s, i) => `
+        <div class="step-item ${i < idx ? 'done' : ''} ${i === idx ? 'current' : ''}">
+          <div class="step-dot">${i < idx ? '✓' : i + 1}</div>
+          <div class="step-lbl">${s}</div>
+        </div>
+        ${i < FLOW_STEPS.length - 1 ? `<div class="step-line ${i < idx ? 'done' : ''}"></div>` : ''}
+      `).join('')}
+    </div>`;
+  }
+
+  function _updateStepper(status) {
+    const el = H.el('cmf-stepper') || document.querySelector('.status-stepper');
+    if (!el) return;
+    el.outerHTML = _statusStepperHTML(status);
+  }
+
   async function openForm(id=null) {
     const [comm,clients]=await Promise.all([id?DB.getById('commissions',id):Promise.resolve(null),DB.getAll('clients')]);
     Modal.open({
@@ -235,9 +261,10 @@ const Commissions = (() => {
           <div class="field"><label>Down Payment (₱)</label><input type="number" id="cmf-down" min="0" step="0.01" value="${comm?.downPayment||0}" placeholder="0.00"/></div>
           <div class="field"><label>Deadline</label><input type="date" id="cmf-deadline" value="${H.toInput(comm?.deadline||'')}"/></div>
         </div>
+        ${comm ? _statusStepperHTML(comm.status) : ''}
         <div class="form-2">
           <div class="field"><label>Status</label>
-            <select id="cmf-status">${STATUSES.map(s=>`<option ${(comm?.status||'Pending')===s?'selected':''}>${s}</option>`).join('')}</select>
+            <select id="cmf-status" onchange="Commissions._updateStepper(this.value)">${STATUSES.map(s=>`<option ${(comm?.status||'Pending')===s?'selected':''}>${s}</option>`).join('')}</select>
           </div>
           <div class="field"><label>Repeats</label>
             <select id="cmf-recur">
@@ -452,5 +479,5 @@ const Commissions = (() => {
     }
   }
 
-  return {render,openForm,openFormWithData,saveForm,duplicate,delOne,delSel,selAll,clearSel,clearFilter,quickStatus,exportCSV,setView,calcRemain};
+  return {render,openForm,openFormWithData,saveForm,duplicate,delOne,delSel,selAll,clearSel,clearFilter,quickStatus,exportCSV,setView,calcRemain,_updateStepper};
 })();

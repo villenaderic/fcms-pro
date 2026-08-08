@@ -75,7 +75,7 @@ const H = (() => {
 
   /* Status chip */
   const chip = st => {
-    const m = { 'Pending':'ch-pending','In Progress':'ch-progress','Revision':'ch-revision','Completed':'ch-completed','Delivered':'ch-delivered','Cancelled':'ch-cancelled','Paid':'ch-paid','Partial':'ch-partial','Draft':'ch-draft','Sent':'ch-sent','Overdue':'ch-overdue' };
+    const m = { 'Pending':'ch-pending','In Progress':'ch-progress','Revision':'ch-revision','Completed':'ch-completed','Delivered':'ch-delivered','Cancelled':'ch-cancelled','Paid':'ch-paid','Partial':'ch-partial','Draft':'ch-draft','Sent':'ch-sent','Overdue':'ch-overdue','Accepted':'ch-accepted','Declined':'ch-declined','Expired':'ch-expired' };
     return `<span class="chip ${m[st]||'ch-blue'}">${esc(st)}</span>`;
   };
 
