@@ -139,7 +139,7 @@ const Clients = (() => {
       const paid     = _paidByClient[c.id] || 0;
       const remain   = _remainByClient[c.id] || 0;
       const hasActive = (_commsByClient[c.id] || []).some(cm => ['Pending','In Progress','Revision'].includes(cm.status));
-      return `<tr>
+      return `<tr data-ctx="Clients" data-ctx-id="${c.id}">
         <td><input type="checkbox" class="cb cl-cb" data-id="${c.id}" ${_sel.has(c.id) ? 'checked' : ''}/></td>
         <td>
           <div class="avatar-row">

@@ -18,21 +18,19 @@ visual status timeline stepper on the commission edit form, notifications
 grouped by urgency (Overdue, Today, This Week, Later), a custom accent color
 picker in Settings, a real print preview for invoices, quotes, and receipts,
 a top bar app grid for quick page switching, collapsible section cards on the
-Client Profile view, and making the app fully offline with zero external
-dependencies (fonts and the PDF library are now bundled instead of loaded
-from a CDN) are done. Everything else below is still open.
+Client Profile view, a right-click context menu on Clients and Commissions
+table rows (Edit, Delete, and module-specific actions), and making the app
+fully offline with zero external dependencies (fonts and the PDF library are
+now bundled instead of loaded from a CDN) are done. The two-pane Settings
+layout also turned out to already be built. Everything else below is still
+open.
 
 - **[S] Row hover actions** - replace always-visible action buttons in tables with
   a single kebab menu (⋮) that appears on row hover, matching how Google Admin
   keeps table rows clean until you interact with them.
-- **[M] Split settings into a two-pane layout** - a narrower left-hand list of
-  setting categories with the active one's content on the right, closer to how
-  Google Admin structures its own settings pages.
 - **[M] Inline cell editing** - click directly into a table cell (like a status
   or a due date) to edit it without opening the full record, for quick one-field
   changes.
-- **[S] Right-click context menu on table rows** - a quick menu (Edit, Delete,
-  Duplicate) on right-click, in addition to the existing action buttons.
 - **[M] Dashboard widget customization** - let the user choose which KPI cards
   or panels show on their dashboard and in what order.
 

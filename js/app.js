@@ -179,6 +179,7 @@ const App = (() => {
     _bindKeyboard();
     _bindNotif();
     _bindAppGrid();
+    _bindContextMenu();
     _bindIdle();
 
     await navigate('dashboard');
@@ -448,6 +449,55 @@ const App = (() => {
   }
 
   /* ── KEYBOARD SHORTCUTS ───────────────────────────────────── */
+  const CTX_ACTIONS = {
+    Clients: [
+      { label: 'Edit Client', ico: '✎', fn: id => Clients.openForm(id) },
+      { label: 'View Profile', ico: '👤', fn: id => Clients.viewProfile(id) },
+      { label: 'Delete', ico: '🗑', danger: true, fn: id => Clients.delOne(id) },
+    ],
+    Commissions: [
+      { label: 'Edit Commission', ico: '✎', fn: id => Commissions.openForm(id) },
+      { label: 'Duplicate', ico: '⧉', fn: id => Commissions.duplicate(id) },
+      { label: 'Delete', ico: '🗑', danger: true, fn: id => Commissions.delOne(id) },
+    ],
+  };
+
+  function _bindContextMenu() {
+    document.addEventListener('contextmenu', e => {
+      const row = e.target.closest('[data-ctx]');
+      if (!row) return;
+      const mod = row.dataset.ctx, id = row.dataset.ctxId;
+      const actions = CTX_ACTIONS[mod];
+      if (!actions) return;
+      e.preventDefault();
+      _showCtxMenu(e.clientX, e.clientY, actions, id);
+    });
+    document.addEventListener('click', () => H.el('ctx-menu')?.remove());
+    document.addEventListener('scroll', () => H.el('ctx-menu')?.remove(), true);
+  }
+
+  function _showCtxMenu(x, y, actions, id) {
+    H.el('ctx-menu')?.remove();
+    const menu = document.createElement('div');
+    menu.id = 'ctx-menu';
+    menu.className = 'ctx-menu';
+    menu.innerHTML = actions.map((a, i) =>
+      `<div class="ctx-item ${a.danger ? 'danger' : ''}" data-i="${i}">${a.ico} ${H.esc(a.label)}</div>`
+    ).join('');
+    document.body.appendChild(menu);
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const rect = menu.getBoundingClientRect();
+    menu.style.left = Math.min(x, vw - rect.width - 8) + 'px';
+    menu.style.top  = Math.min(y, vh - rect.height - 8) + 'px';
+    menu.querySelectorAll('.ctx-item').forEach(el => {
+      el.addEventListener('click', ev => {
+        ev.stopPropagation();
+        actions[+el.dataset.i].fn(id);
+        menu.remove();
+      });
+    });
+  }
+
   function _bindKeyboard() {
     document.addEventListener('keydown', e => {
       const tag = document.activeElement?.tagName?.toLowerCase();

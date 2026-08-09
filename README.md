@@ -109,6 +109,10 @@ If there is no Unblock checkbox, Smart App Control is set to a strict mode. Open
 ## Changelog
 
 **Latest**
+- Added a right-click context menu to Clients and Commissions table rows
+  (Edit, Delete, and module-specific actions like Duplicate or View Profile)
+- Confirmed the two-pane Settings layout and the top bar app grid were already
+  built from earlier work
 - Confirmed and documented that the app has zero external network dependencies
   (no CDN fonts, no CDN scripts) and works fully offline once loaded
 - Added collapsible section cards to the Client Profile view (Commission
