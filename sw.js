@@ -1,8 +1,11 @@
-/* FCMS Pro Service Worker v4.1 */
-const CACHE = 'fcms-v4-1';
+/* FCMS Pro Service Worker v4.2 - fully offline, no external dependencies */
+const CACHE = 'fcms-v4-2';
 const CORE  = [
   './', './index.html', './css/main.css', './manifest.json',
   './assets/auth-background.jpg',
+  './assets/fonts/inter-400.woff2', './assets/fonts/inter-500.woff2',
+  './assets/fonts/inter-600.woff2', './assets/fonts/inter-700.woff2', './assets/fonts/inter-800.woff2',
+  './assets/fonts/jbmono-400.woff2', './assets/fonts/jbmono-500.woff2', './assets/fonts/jbmono-600.woff2',
   './js/app.js',
   './js/utils/helpers.js',  './js/utils/db.js',
   './js/utils/notify.js',   './js/utils/modal.js',
@@ -14,6 +17,7 @@ const CORE  = [
   './js/modules/receipts.js',    './js/modules/expenses.js',
   './js/modules/invoices.js',    './js/modules/logs.js',
   './js/modules/settings.js',    './js/modules/backup.js',
+  './js/vendor/jspdf.umd.min.js', './js/vendor/jspdf.plugin.autotable.min.js',
   './icons/icon.svg',
 ];
 

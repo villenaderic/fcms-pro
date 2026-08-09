@@ -27,6 +27,7 @@ FCMS Pro is a browser-based client and commission management system built for fr
 - HTML and CSS for the interface
 - A small PHP backend (optional) for receipt and invoice PDF-style printing, CSV export, and email delivery
 - Service worker and web manifest for PWA support
+- No external dependencies at runtime: fonts and the PDF export library are bundled in the project, not loaded from a CDN, so the app works fully offline from the very first run
 
 ## Getting started
 
@@ -108,6 +109,17 @@ If there is no Unblock checkbox, Smart App Control is set to a strict mode. Open
 ## Changelog
 
 **Latest**
+- Confirmed and documented that the app has zero external network dependencies
+  (no CDN fonts, no CDN scripts) and works fully offline once loaded
+- Added collapsible section cards to the Client Profile view (Commission
+  History and Recent Activity can now expand and collapse with a chevron)
+- Added a top bar app grid (the waffle icon) for jumping directly to any page
+  from anywhere in the app, similar to Google's own app switcher
+- Made the app fully offline with zero external dependencies: the PDF export
+  library (jsPDF) and the Inter/JetBrains Mono fonts, which previously loaded
+  from external CDNs, are now bundled directly in the project. Every feature,
+  including PDF export, now works on first run with no internet connection at
+  all, and the service worker caches everything for offline use afterward
 - Fixed a real bug in Invoices, Quotes, and Receipts: printing used to open a
   window that immediately triggered the print dialog and then force-closed
   itself after half a second, whether or not you actually printed. There was

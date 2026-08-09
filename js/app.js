@@ -46,6 +46,7 @@ const App = (() => {
   let _kbTimer = null;
   let _notifOpen = false;
   let _userOpen  = false;
+  let _appGridOpen = false;
 
   /* ── BOOT ─────────────────────────────────────────────────── */
   async function init() {
@@ -177,6 +178,7 @@ const App = (() => {
     _bindSearch();
     _bindKeyboard();
     _bindNotif();
+    _bindAppGrid();
     _bindIdle();
 
     await navigate('dashboard');
@@ -211,6 +213,10 @@ const App = (() => {
     if (!ROUTES[page]) page = 'dashboard';
     _page = page;
     setBreadcrumb([PAGE_LABELS[page] || 'Dashboard']);
+
+    H.el('appgrid-panel')?.classList.add('hidden'); _appGridOpen = false;
+    if (_notifOpen) _closeNotif();
+    if (_userOpen) { H.el('user-drop')?.classList.add('hidden'); _userOpen = false; }
 
     document.querySelectorAll('.nav-item[data-page]').forEach(el => {
       el.classList.toggle('active', el.dataset.page === page);
@@ -521,6 +527,47 @@ const App = (() => {
 
   function _closeNotif() {
     H.el('notif-panel')?.classList.add('hidden'); _notifOpen = false;
+  }
+
+  /* ── APP GRID (quick page switcher) ──────────────────────────── */
+  const PAGE_ICONS = {
+    dashboard:'📊', analytics:'📈', goals:'🎯', clients:'👥', quotes:'💬',
+    commissions:'🎨', templates:'🗂️', payments:'💳', invoices:'📃',
+    receipts:'🧾', expenses:'💸', logs:'📋', backup:'💾', settings:'⚙️'
+  };
+
+  function _bindAppGrid() {
+    const btn   = H.el('appgrid-btn');
+    const panel = H.el('appgrid-panel');
+    if (!btn || !panel) return;
+
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      _appGridOpen = !_appGridOpen;
+      if (_appGridOpen) { _renderAppGrid(panel); panel.classList.remove('hidden'); }
+      else panel.classList.add('hidden');
+      if (_notifOpen) _closeNotif();
+      if (_userOpen) { H.el('user-drop')?.classList.add('hidden'); _userOpen = false; }
+    });
+
+    document.addEventListener('click', e => {
+      if (!btn.contains(e.target) && !panel.contains(e.target)) {
+        panel.classList.add('hidden'); _appGridOpen = false;
+      }
+    });
+  }
+
+  function _renderAppGrid(panel) {
+    panel.innerHTML = `
+      <div class="ag-head">Jump to</div>
+      <div class="ag-grid">
+        ${Object.entries(PAGE_LABELS).map(([key, label]) => `
+          <div class="ag-tile ${_page===key?'active':''}" onclick="App.navigate('${key}')">
+            <div class="ag-ico">${PAGE_ICONS[key]||'📄'}</div>
+            <div class="ag-lbl">${H.esc(label)}</div>
+          </div>
+        `).join('')}
+      </div>`;
   }
 
   async function _renderNotifPanel(panel) {

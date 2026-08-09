@@ -13,8 +13,8 @@
   <link rel="stylesheet" href="css/main.css"/>
   <script>
     (function(){
-      ['https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
-       'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js']
+      ['js/vendor/jspdf.umd.min.js',
+       'js/vendor/jspdf.plugin.autotable.min.js']
       .forEach(src=>{ var s=document.createElement('script'); s.src=src; s.async=true; document.head.appendChild(s); });
     })();
   </script>
@@ -153,7 +153,7 @@
       <button class="sb-icon-btn" id="sc-btn" title="Shortcuts (?)">
         <svg viewBox="0 0 24 24" width="15" fill="currentColor"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/></svg>
       </button>
-      <span class="sb-ver">v4.0</span>
+      <span class="sb-ver">v4.2</span>
     </div>
   </aside>
 
@@ -169,6 +169,12 @@
         <div id="search-drop" class="search-drop hidden"></div>
       </div>
       <div class="tb-right">
+        <div style="position:relative">
+          <button class="tb-btn" id="appgrid-btn" title="Quick jump to any page">
+            <svg viewBox="0 0 24 24" width="17" fill="currentColor"><path d="M6 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM6 14c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM6 20c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"/></svg>
+          </button>
+          <div id="appgrid-panel" class="appgrid-panel hidden"></div>
+        </div>
         <div style="position:relative">
           <button class="tb-btn" id="notif-btn" title="Notifications">
             <svg viewBox="0 0 24 24" width="17" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>

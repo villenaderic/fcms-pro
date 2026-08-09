@@ -16,18 +16,15 @@ skeleton loading placeholders on page navigation, a full tooltip pass on
 icon-only buttons, consistent status pill colors across the whole app, a
 visual status timeline stepper on the commission edit form, notifications
 grouped by urgency (Overdue, Today, This Week, Later), a custom accent color
-picker in Settings, and a real print preview for invoices, quotes, and
-receipts are done. Everything else below is still open.
+picker in Settings, a real print preview for invoices, quotes, and receipts,
+a top bar app grid for quick page switching, collapsible section cards on the
+Client Profile view, and making the app fully offline with zero external
+dependencies (fonts and the PDF library are now bundled instead of loaded
+from a CDN) are done. Everything else below is still open.
 
-- **[S] Collapsible section cards** - the Client Profile and Settings pages would
-  feel more like the Google reference if sections (Storage, Security, Groups style
-  blocks) could expand and collapse with a chevron, instead of always showing
-  everything at once.
 - **[S] Row hover actions** - replace always-visible action buttons in tables with
   a single kebab menu (⋮) that appears on row hover, matching how Google Admin
   keeps table rows clean until you interact with them.
-- **[M] Top bar app grid** - a waffle-style icon (▦) in the top bar that opens a
-  quick-jump grid to any page, similar to Google's app switcher.
 - **[M] Split settings into a two-pane layout** - a narrower left-hand list of
   setting categories with the active one's content on the right, closer to how
   Google Admin structures its own settings pages.

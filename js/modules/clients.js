@@ -236,7 +236,11 @@ const Clients = (() => {
             </div>
           </div>
         </div>
-        <div class="card-label">Commission History</div>
+        <div class="collapse-hd" onclick="Clients._toggleSection(this)">
+          <span class="card-label" style="margin:0">Commission History</span>
+          <svg class="collapse-chevron" viewBox="0 0 24 24" width="16"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
+        </div>
+        <div class="collapse-body">
         ${clientComms.length ? `<div class="tbl-wrap" style="max-height:220px;overflow-y:auto"><table>
           <thead><tr><th>Title</th><th>Service</th><th>Price</th><th>Remaining</th><th>Status</th><th>Deadline</th></tr></thead>
           <tbody>${clientComms.map(cm => `<tr>
@@ -248,7 +252,12 @@ const Clients = (() => {
             <td style="font-size:.79rem" class="muted">${H.fmtDate(cm.deadline)}</td>
           </tr>`).join('')}</tbody>
         </table></div>` : '<div class="empty"><div class="empty-ttl">No commissions yet</div></div>'}
-        <div class="card-label" style="margin-top:16px">Recent Activity</div>
+        </div>
+        <div class="collapse-hd" style="margin-top:16px" onclick="Clients._toggleSection(this)">
+          <span class="card-label" style="margin:0">Recent Activity</span>
+          <svg class="collapse-chevron" viewBox="0 0 24 24" width="16"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
+        </div>
+        <div class="collapse-body">
         ${timeline.length ? `<div style="max-height:240px;overflow-y:auto;display:flex;flex-direction:column;gap:2px">
           ${timeline.map(t => `<div style="display:flex;align-items:center;gap:10px;padding:7px 4px;border-bottom:1px solid var(--border)">
             <span style="width:8px;height:8px;border-radius:50%;flex-shrink:0;background:var(--${t.dot === 'blue' ? 'a' : t.dot === 'green' ? 'green' : 'amber'})"></span>
@@ -258,7 +267,8 @@ const Clients = (() => {
             </div>
             <div class="mono" style="font-size:.8rem;flex-shrink:0">${H.peso(t.amount)}</div>
           </div>`).join('')}
-        </div>` : '<div class="empty"><div class="empty-ttl">No activity yet</div></div>'}`,
+        </div>` : '<div class="empty"><div class="empty-ttl">No activity yet</div></div>'}
+        </div>`,
       foot: `
         <button class="btn btn-ghost" onclick="Modal.close()">Close</button>
         <button class="btn btn-ghost" onclick="Clients.openForm('${id}');Modal.close()">Edit Client</button>
@@ -368,5 +378,11 @@ const Clients = (() => {
     Notify.ok('Clients exported to CSV.');
   }
 
-  return { render, openForm, saveForm, viewProfile, delOne, delSel, selAll, clearSel, viewComm, exportCSV };
+  function _toggleSection(hd) {
+    hd.classList.toggle('collapsed');
+    const body = hd.nextElementSibling;
+    if (body) body.classList.toggle('collapsed');
+  }
+
+  return { render, openForm, saveForm, viewProfile, delOne, delSel, selAll, clearSel, viewComm, exportCSV, _toggleSection };
 })();
